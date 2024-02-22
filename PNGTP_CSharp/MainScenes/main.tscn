@@ -1,0 +1,264 @@
+[gd_scene load_steps=3 format=3 uid="uid://cn2x7ha4i761k"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_45wb1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lb7c1"]
+
+[node name="Main" type="Node2D"]
+
+[node name="MouseCursor" type="Node2D" parent="."]
+
+[node name="Lines" type="Node2D" parent="."]
+
+[node name="V" type="Line2D" parent="Lines"]
+
+[node name="H" type="Line2D" parent="Lines"]
+
+[node name="OriginMotion" type="Node2D" parent="."]
+
+[node name="Origin" type="Node2D" parent="OriginMotion"]
+
+[node name="ControlPanel" type="Node2D" parent="."]
+
+[node name="MicInputSelect" type="Node2D" parent="ControlPanel"]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ControlPanel/MicInputSelect"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlPanel/MicInputSelect/ScrollContainer"]
+layout_mode = 2
+
+[node name="MicButtonG" type="Sprite2D" parent="ControlPanel"]
+
+[node name="button_Mic" type="Button" parent="ControlPanel/MicButtonG"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="SettingsButton" type="Sprite2D" parent="ControlPanel"]
+
+[node name="button_Settings" type="Button" parent="ControlPanel/SettingsButton"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="SettingsMenu" type="Node2D" parent="ControlPanel"]
+
+[node name="Edit" type="Sprite2D" parent="ControlPanel"]
+
+[node name="button_Edit" type="Button" parent="ControlPanel/Edit"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="FancyEdit" type="Sprite2D" parent="ControlPanel/Edit"]
+
+[node name="VolumeBar" type="TextureProgressBar" parent="ControlPanel"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Sensitive" type="TextureProgressBar" parent="ControlPanel"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VolumeSlider" type="HSlider" parent="ControlPanel"]
+offset_right = 8.0
+offset_bottom = 16.0
+
+[node name="SensitiveSlider" type="HSlider" parent="ControlPanel"]
+offset_right = 8.0
+offset_bottom = 16.0
+
+[node name="Links" type="Sprite2D" parent="ControlPanel"]
+
+[node name="kofi_kaiakairos" type="Button" parent="ControlPanel/Links"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="twitter_kaiakairos" type="Button" parent="ControlPanel/Links"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="kofi_jeff" type="Button" parent="ControlPanel/Links"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="twitter_jeff" type="Button" parent="ControlPanel/Links"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="bsky_jeff" type="Button" parent="ControlPanel/Links"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="ZoomLabel" type="Label" parent="ControlPanel"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="VersionLabels" type="Node2D" parent="ControlPanel"]
+
+[node name="Label" type="Label" parent="ControlPanel/VersionLabels"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="LabelTwo" type="Label" parent="ControlPanel/VersionLabels"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="VersionNumber" type="Label" parent="ControlPanel/VersionLabels/LabelTwo"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="EditControls" type="Node2D" parent="."]
+visible = false
+
+[node name="Add" type="Sprite2D" parent="EditControls"]
+
+[node name="FancyAdd" type="Sprite2D" parent="EditControls/Add"]
+
+[node name="AddButton" type="Button" parent="EditControls/Add"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Link" type="Sprite2D" parent="EditControls"]
+
+[node name="FancyLink" type="Sprite2D" parent="EditControls/Link"]
+
+[node name="LinkButton" type="Button" parent="EditControls/Link"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Area2D" type="Area2D" parent="EditControls/Link"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/Link/Area2D"]
+shape = SubResource("RectangleShape2D_45wb1")
+
+[node name="Area2D2" type="Area2D" parent="EditControls/Link"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/Link/Area2D2"]
+shape = SubResource("RectangleShape2D_lb7c1")
+
+[node name="Exit" type="Sprite2D" parent="EditControls"]
+
+[node name="FancyExit" type="Sprite2D" parent="EditControls/Exit"]
+
+[node name="ExitButton" type="Button" parent="EditControls/Exit"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Save" type="Sprite2D" parent="EditControls"]
+
+[node name="FancySave" type="Sprite2D" parent="EditControls/Save"]
+
+[node name="SaveButton" type="Button" parent="EditControls/Save"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Load" type="Sprite2D" parent="EditControls"]
+
+[node name="FancyLoad" type="Sprite2D" parent="EditControls/Load"]
+
+[node name="LoadButton" type="Button" parent="EditControls/Load"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="ReplicateSprite" type="Sprite2D" parent="EditControls"]
+
+[node name="FancyReplicate" type="Sprite2D" parent="EditControls/ReplicateSprite"]
+
+[node name="ReplicateButton" type="Button" parent="EditControls/ReplicateSprite"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Area2D" type="Area2D" parent="EditControls/ReplicateSprite"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/ReplicateSprite/Area2D"]
+shape = SubResource("RectangleShape2D_45wb1")
+
+[node name="DuplicateSprite" type="Sprite2D" parent="EditControls"]
+
+[node name="FancyDupliate" type="Sprite2D" parent="EditControls/DuplicateSprite"]
+
+[node name="DuplicateButton" type="Button" parent="EditControls/DuplicateSprite"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Area2D" type="Area2D" parent="EditControls/DuplicateSprite"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/DuplicateSprite/Area2D"]
+shape = SubResource("RectangleShape2D_45wb1")
+
+[node name="ScreenCover" type="Area2D" parent="EditControls"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/ScreenCover"]
+shape = SubResource("RectangleShape2D_45wb1")
+
+[node name="SpriteViewer" type="Node2D" parent="EditControls"]
+
+[node name="MoveMenuUp" type="Area2D" parent="EditControls"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/MoveMenuUp"]
+shape = SubResource("RectangleShape2D_45wb1")
+
+[node name="MoveMenuDown" type="Area2D" parent="EditControls"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EditControls/MoveMenuDown"]
+shape = SubResource("RectangleShape2D_45wb1")
+
+[node name="SpriteList" type="Node2D" parent="EditControls"]
+
+[node name="HowTo" type="Node2D" parent="."]
+
+[node name="Info" type="Sprite2D" parent="HowTo"]
+
+[node name="button_Info" type="Button" parent="HowTo/Info"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Instructions" type="NinePatchRect" parent="HowTo"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="HowTo/Instructions"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="dialogue_AddImage" type="FileDialog" parent="."]
+
+[node name="dialogue_ReplaceImage" type="FileDialog" parent="."]
+size = Vector2i(312, 154)
+
+[node name="dialogue_SaveAvatar" type="FileDialog" parent="."]
+size = Vector2i(312, 154)
+
+[node name="dialogue_LoadAvatar" type="FileDialog" parent="."]
+size = Vector2i(312, 154)
+
+[node name="Chain" type="Node2D" parent="."]
+
+[node name="Failed" type="Node2D" parent="."]
+
+[node name="Failed2" type="Sprite2D" parent="Failed"]
+
+[node name="Label" type="Label" parent="Failed"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="label_ErrorType" type="Label" parent="Failed"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ViewerArrows" type="Node2D" parent="."]
+
+[node name="Arrows" type="Sprite2D" parent="ViewerArrows"]
+
+[node name="Arrows2" type="Sprite2D" parent="ViewerArrows"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="BackgroundInputCapture" type="Node" parent="."]
+
+[node name="PushUpdates" type="Node2D" parent="."]
+
+[node name="ShadowSprite" type="Sprite2D" parent="."]
+
+[node name="AudioStreamRecord" type="AudioStreamPlayer2D" parent="."]
