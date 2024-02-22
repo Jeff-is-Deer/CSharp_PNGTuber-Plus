@@ -3,6 +3,7 @@ using System;
 
 public partial class Saving : Node
 {
+	public AvatarData Default { get; } = null;
 	public string Key { get; } = "creature";
 	public string SettingsPath { get; } = "user://settings.pngtp";
 
@@ -23,10 +24,10 @@ public partial class Saving : Node
 	{
 	}
 
-	public AvatarData ReadSave(string path)
+	public AvatarData? ReadSave(string path)
 	{
 		if (path == "default") {
-			return AvatarData.Default;
+			return Default;
 		}
 		if(OS.HasFeature("web") {
 			Variant JsonString = JavaScriptBridge.Eval($"window.localStorage.getItem(\"{Key}\");");

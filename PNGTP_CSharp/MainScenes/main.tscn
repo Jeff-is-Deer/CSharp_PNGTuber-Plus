@@ -1,4 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cn2x7ha4i761k"]
+[gd_scene load_steps=6 format=3 uid="uid://cn2x7ha4i761k"]
+
+[ext_resource type="Script" path="res://UiScenes/Mouse/MouseCursor.cs" id="1_bghpe"]
+[ext_resource type="Script" path="res://MainScenes/ControlPanel.cs" id="2_j88lc"]
+[ext_resource type="Script" path="res://MainScenes/MicInputSelect.cs" id="3_ppi0k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_45wb1"]
 
@@ -7,6 +11,7 @@
 [node name="Main" type="Node2D"]
 
 [node name="MouseCursor" type="Node2D" parent="."]
+script = ExtResource("1_bghpe")
 
 [node name="Lines" type="Node2D" parent="."]
 
@@ -19,8 +24,10 @@
 [node name="Origin" type="Node2D" parent="OriginMotion"]
 
 [node name="ControlPanel" type="Node2D" parent="."]
+script = ExtResource("2_j88lc")
 
 [node name="MicInputSelect" type="Node2D" parent="ControlPanel"]
+script = ExtResource("3_ppi0k")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="ControlPanel/MicInputSelect"]
 offset_right = 40.0
@@ -29,9 +36,9 @@ offset_bottom = 40.0
 [node name="VBoxContainer" type="VBoxContainer" parent="ControlPanel/MicInputSelect/ScrollContainer"]
 layout_mode = 2
 
-[node name="MicButtonG" type="Sprite2D" parent="ControlPanel"]
+[node name="MicButton" type="Sprite2D" parent="ControlPanel"]
 
-[node name="button_Mic" type="Button" parent="ControlPanel/MicButtonG"]
+[node name="button_Mic" type="Button" parent="ControlPanel/MicButton"]
 offset_right = 8.0
 offset_bottom = 8.0
 
@@ -104,6 +111,7 @@ offset_right = 40.0
 offset_bottom = 23.0
 
 [node name="VersionNumber" type="Label" parent="ControlPanel/VersionLabels/LabelTwo"]
+layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 

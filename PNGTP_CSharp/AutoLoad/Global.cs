@@ -1,7 +1,6 @@
 using Godot;
 using Godot.Collections;
 using System;
-using System.Threading;
 
 public partial class GlobalClass : Node
 {
@@ -17,6 +16,7 @@ public partial class GlobalClass : Node
 	public AudioStreamPlayer CurrentMicrophone { set; get; } = null;
 	public Node2D Failed { get; set; } = null;
 	public AudioEffectSpectrumAnalyzerInstance Spectrum { set; get; } = null;
+	public Color BackgroundColor { get; set; } = new Color(0.0f , 0.0f , 0.0f , 0.0f);
     public bool Filtering { get; set; } = false;
 	public bool IsSpeaking { get; set; } = false;
 	public bool IsBlinking { get; set; } = false;
