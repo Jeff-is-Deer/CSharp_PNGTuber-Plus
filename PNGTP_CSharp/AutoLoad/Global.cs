@@ -28,7 +28,7 @@ public partial class GlobalClass : Node
 	public string PrimaryNodeGroup { set; get; } = "NO TOUCHY >:(";
 
     public float Volume { get; set; } = 0.0f;
-	public float VolumeLimit { get; set; } = 0.0f;
+	public double VolumeLimit { get; set; } = 0.0f;
     public float VolumeSensitivity { set; get; } = 0.0f;
 	public double SenseVolumeLimit { set; get; } = 0.0;
 	public int AnimationTick { get; set; } = 0;
