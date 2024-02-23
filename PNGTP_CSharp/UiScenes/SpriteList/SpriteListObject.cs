@@ -9,12 +9,12 @@ public partial class SpriteListObject : NinePatchRect
     public Sprite2D Fade { get; set; } = null;
     public Label SpriteLabel { get; set; } = null;
     public Line2D Line { get; set; } = null;
-    public SpriteData Sprite { get; set; } = null;
+    public SpriteObject Sprite { get; set; } = null;
     public string SpritePath { get; set; } = string.Empty;
 
     public void _Ready()
     {
-        Sprite = new SpriteData();
+        Sprite = new SpriteObject();
         SpritePreview = GetNode<Sprite2D>("SpritePreview/Sprite2D");
         Outline = GetNode<Sprite2D>("Selected");
         Fade = GetNode<Sprite2D>("Fade");
@@ -29,8 +29,22 @@ public partial class SpriteListObject : NinePatchRect
 
 
     }
+
+    public void _Process()
+    {
+        Outline.Visible = Sprite == Global.HeldSprite;
+    }
     public void UpdateVisibility()
     {
         Fade.Visible = !SpritePreview.Visible;
+    }
+
+    public void Event_ButtonPressed()
+    {
+        if(Global.HeldSprite != null && Global.ReparentingMode) {
+            Global.LinkSprite(Global.HeldSprite , Sprite);
+            Global.Chain.Enable(true);
+        }
+
     }
 }

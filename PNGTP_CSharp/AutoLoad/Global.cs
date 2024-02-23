@@ -10,18 +10,20 @@ public partial class GlobalClass : Node
 	public delegate void StopSpeakingEventHandler();
 
 	public static GlobalClass Global { get; set; } = null;
-
     public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
 	public SpriteListViewer SpriteList { set; get; } = null;
 	public SpriteObject HeldSprite { get; set; } = null;
 	public AudioStreamPlayer CurrentMicrophone { set; get; } = null;
 	public Node2D Failed { get; set; } = null;
+	public Chain Chain { set; get; } = null;
+	public PushUpdates UpdatePusherNode { set; get; } = null;
 	public AudioEffectSpectrumAnalyzerInstance Spectrum { set; get; } = null;
 	public Color BackgroundColor { get; set; } = new Color(0.0f , 0.0f , 0.0f , 0.0f);
     public bool Filtering { get; set; } = false;
 	public bool IsSpeaking { get; set; } = false;
 	public bool IsBlinking { get; set; } = false;
+	public bool ReparentingMode { get; set; } = false;
 
 	public string PrimaryNodeGroup { set; get; } = "NO TOUCHY >:(";
 
@@ -67,7 +69,7 @@ public partial class GlobalClass : Node
 		}
 		if (Main != null && HeldSprite != null) {
 			if ( Input.IsActionJustPressed("zDown")) {
-				HeldSprite.ZLayer -= 1;
+				HeldSprite.LoadedSprite.ZLayer -= 1;
 				HeldSprite.SetZLayer();
 				PushUpdate("Moved sprite layer.");
 			}
@@ -149,4 +151,11 @@ public partial class GlobalClass : Node
 		}
 		var PreviousSprite = HeldSprite;
 	}
+
+	public void PushUpdate(string message)
+	{
+        if (IsInstanceIdValid(UpdatePusherNode) {
+
+		}
+    }
 }

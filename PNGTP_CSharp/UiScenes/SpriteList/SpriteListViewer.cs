@@ -1,6 +1,6 @@
 ﻿using Godot;
 using Godot.Collections;
-using System;
+using System.Collections.Generic;
 using static GlobalClass;
 
 public partial class SpriteListViewer : Node2D
@@ -20,8 +20,8 @@ public partial class SpriteListViewer : Node2D
         ClearContainer();
         await ToSignal(GetTree().CreateTimer(0.15),SceneTreeTimer.SignalName.Timeout);
         Array<Node> allSprites = GetTree().GetNodesInGroup("saved");
-        Array<Node> childSprites = new Array<Node>();
-        Array<Node> parsedSprites = new Array<Node>();
+        List<SpriteListObject> childSprites = new List<SpriteListObject >();
+        Array<SpriteListObject> parsedSprites = new Array<SpriteListObject>();
         foreach(SpriteObject sprite in allSprites) {
             SpriteListObject spriteListObject = SpriteListObject.Instantiate<SpriteListObject>();
             spriteListObject.SpritePath = sprite.LoadedSprite.Path;
@@ -45,7 +45,9 @@ public partial class SpriteListViewer : Node2D
     }
     public void ClearContainer()
     {
-
+        foreach(Node child in Container.GetChildren()) {
+            child.QueueFree();
+        }
     }
     public void UpdateAllVisibility()
     {
