@@ -2,7 +2,7 @@
 using Godot;
 using static GlobalClass;
 
-public partial class Sensitive : TextureProgressBar
+public partial class Sensitivity : TextureProgressBar
 {
     public override void _Process(double delta)
     {

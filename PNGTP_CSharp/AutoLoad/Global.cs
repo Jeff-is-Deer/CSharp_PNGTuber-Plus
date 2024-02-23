@@ -30,7 +30,7 @@ public partial class GlobalClass : Node
     public float Volume { get; set; } = 0.0f;
 	public float VolumeLimit { get; set; } = 0.0f;
     public float VolumeSensitivity { set; get; } = 0.0f;
-	public float SenseVolumeLimit { set; get; } = 0.0f;
+	public double SenseVolumeLimit { set; get; } = 0.0;
 	public int AnimationTick { get; set; } = 0;
 	public int MicResetTime { get; set; } = 180;
 
@@ -154,7 +154,7 @@ public partial class GlobalClass : Node
 
 	public void PushUpdate(string message)
 	{
-        if (IsInstanceIdValid(UpdatePusherNode) {
+        if (IsInstanceIdValid(UpdatePusherNode.GetInstanceId())) {
 
 		}
     }
