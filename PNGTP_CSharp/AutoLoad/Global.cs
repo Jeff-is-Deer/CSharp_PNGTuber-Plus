@@ -19,6 +19,7 @@ public partial class GlobalClass : Node
 	public Chain Chain { set; get; } = null;
 	public PushUpdates UpdatePusherNode { set; get; } = null;
 	public AudioEffectSpectrumAnalyzerInstance Spectrum { set; get; } = null;
+	public SpriteViewer SpriteEdit { set; get; } = null;
 	public Color BackgroundColor { get; set; } = new Color(0.0f , 0.0f , 0.0f , 0.0f);
     public bool Filtering { get; set; } = false;
 	public bool IsSpeaking { get; set; } = false;
