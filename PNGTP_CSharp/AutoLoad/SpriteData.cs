@@ -1,21 +1,22 @@
-﻿using Godot;
-using System;
-
-public class SpriteData : AvatarData
+﻿public class SpriteData
 {
-    public int Drag { get; set; }
-    public int Identification { get; set; }
+    public string Path { get; set; }
+    public byte Type { get; set; }
     public float[] Offset { get; set; } = new float[2];
-    public int ParentId { get; set; }
-    public string PathLocation {  get; set; }
     public float[] Position { get; set; } = new float[2];
-    public int RotationalDrag { get; set; }
-    public int ShowBlink { get; set; }
-    public int ShowTalk { get; set; }
-    public float XAmplification { get; set; }
-    public float YAmplification { get; set; }
+    public int DragSpeed { get; set; }
+    public byte Identification { get; set; }
+    public byte ParentIdentification { get; set; }
+    public int RotationalDragStrength { get; set; }
+    // Sprite rendering
+    public byte ShowOnBlink { get; set; }
+    public byte ShowOnTalk { get; set; }
+    // Wobble
     public float XFrequency { get; set; }
     public float YFrequency { get; set; }
-    public int ZLayer { get; set; }
+    public float XAmplification { get; set; }
+    public float YAmplification { get; set; }
+    // Layers
+    public byte ZLayer { get; set; }
 }
 

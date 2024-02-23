@@ -10,8 +10,10 @@ public partial class GlobalClass : Node
 	public delegate void StopSpeakingEventHandler();
 
 	public static GlobalClass Global { get; set; } = null;
-	public Main Main { get; set; } = null;
+
+    public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
+	public SpriteListViewer SpriteList { set; get; } = null;
 	public SpriteObject HeldSprite { get; set; } = null;
 	public AudioStreamPlayer CurrentMicrophone { set; get; } = null;
 	public Node2D Failed { get; set; } = null;
@@ -30,7 +32,7 @@ public partial class GlobalClass : Node
 	public int AnimationTick { get; set; } = 0;
 	public int MicResetTime { get; set; } = 180;
 
-	RandomNumberGenerator RandomNum { get; } = new RandomNumberGenerator();
+	public RandomNumberGenerator RandomNum { get; } = new RandomNumberGenerator();
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -71,6 +73,8 @@ public partial class GlobalClass : Node
 			}
 		}
 	}
+
+
 
 	public async void ErrorHandler(Error error)
 	{

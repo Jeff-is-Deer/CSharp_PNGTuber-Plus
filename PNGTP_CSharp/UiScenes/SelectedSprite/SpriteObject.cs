@@ -6,6 +6,8 @@ using System;
 
 public partial class SpriteObject : Sprite2D
 {
+	public const byte SPRITE = 1;
+	public const byte ANIMATION = 2;
 	// Nodes
 	public PackedScene OutlineScene { get; set; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SelectedSprite/Outline.tscn");
 	public Sprite2D Sprite { get; set; } = null;
@@ -14,50 +16,35 @@ public partial class SpriteObject : Sprite2D
 	public Node2D DragOrigin { get; set; } = null;
 	public Node2D Dragger { get; set; } = null;
 	public Node2D WobbleOrigin { get; set; } = null;
+	public SpriteData LoadedSprite { get; set; } = null;
 
-	public string Type { get; } = "Sprite";
 
 	// Passed Variables
 	public Image ImageData { get; set; } = null;
 	public string LoadedImageData { get; set; } = null;
 	public ImageTexture ImgTexture { get; set; } = null;
 
-	[Export]
-	public string Path { get; set; } = string.Empty;
-	public int Id { get; set; } = 0;
-	public int ParentId { get; set; } = 0;
-	public Node ParentSprite { get; set; } = null;
+	public Sprite2D ParentSprite { get; set; } = null;
 	public Vector2 ImageSize { get; set; } = Vector2.Zero;
 
 	// Visuals
 	public Vector2 MouseOffset { get; set; } = Vector2.Zero;
 	public int GrabDelay { get; set; } = 0;
 	public Vector2 Size { get; set; } = new Vector2(1 , 1);
-	public int ShowOnTalk { get; set; } = 0;
-	public int ShowOnBlink { get; set; } = 0;
-	public int ZLayer { get; set; } = 0;
 
 	// Movement
 	public int HeldTicks { get; set; } = 0;
-	public int DragSpeed { get; set; } = 0;
 
 	// Origin
 	public int OriginTick { get; set; } = 0;
-	public Vector2 Offset { get; set; } = Vector2.Zero;
 
-	// Wobble
-	public float XFrequency { get; set; } = 0.0f;
-	public float YFrequency { get; set; } = 0.0f;
-	public float XAmplification { get; set; } = 0.0f;
-	public float YAmplification { get; set; } = 0.0f;
 
 	// Rotational drag
-	public int RotationalDragStrength { get; set; } = 0;
-	public int RotationaLimitMax { get; set; } = 180;
-	public int RotationaLimitMin { get; set; } = -180;
+	public Int16 RotationaLimitMax { get; set; } = 180;
+	public Int16 RotationaLimitMin { get; set; } = -180;
 
 	// Layer
-	public int[] CostumeLayers { get; set; } = { 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 };
+	public byte[] CostumeLayers { get; set; } = { 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 };
 
 	// Stretch
 	public float StretchAmount { get; set; } = 0.0f;
@@ -71,8 +58,30 @@ public partial class SpriteObject : Sprite2D
 	public bool RemadePolygon { get; set; } = false;
 	public bool IsClipped { get; set; } = false;
 	public int Tick { get; set; } = 0;
-	// Called when the node enters the scene tree for the first time.
-	public override async void _Ready()
+
+	#region SpriteData
+	/*
+	public string Path { get; set; } = string.Empty;
+    public byte Type { get; set; } = SPRITE;
+    public int DragSpeed { get; set; } = 0;
+    public byte Identification { get; set; } = 0;
+    public byte ParentIdentification { get; set; } = 0;
+//  public Vector2 Offset { get; set; } = new Vector2(SpriteData.Offset[0],SpriteData.Offset[1]);
+//  public Vector2 Position { get; set; } = new Vector2)SpriteData.Position[0],SpriteData.Position[1]);
+    public int RotationalDragStrength { get; set; } = 0;
+    public byte ShowOnBlink { get; set; } = 0;
+    public byte ShowOnTalk { get; set; } = 0;
+    public float XFrequency { get; set; } = 0.0f;
+    public float YFrequency { get; set; } = 0.0f;
+    public float XAmplification { get; set; } = 0.0f;
+    public float YAmplification { get; set; } = 0.0f;
+    public byte ZLayer { get; set; } = 0;
+	*/
+    #endregion
+
+
+    // Called when the node enters the scene tree for the first time.
+    public override async void _Ready()
 	{
 		Sprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite");
 		OriginSprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite/Origin");
@@ -80,9 +89,10 @@ public partial class SpriteObject : Sprite2D
 		DragOrigin = GetNode<Node2D>("WobbleOrigin/DragOrigin");
 		Dragger = GetNode<Node2D>("WobbleOrigin/Dragger");
 		WobbleOrigin = GetNode<Node2D>("WobbleOrigin");
+		Offset = new Vector2(1.0f , 1.0f);
 
 		Image image = new Image();
-		Error imageLoadError = image.Load(Path);
+		Error imageLoadError = image.Load(LoadedSprite.Path);
 		if(imageLoadError != Error.Ok) {
 			if (LoadedImageData == null) {
 				Global.ErrorHandler(imageLoadError);
@@ -129,13 +139,13 @@ public partial class SpriteObject : Sprite2D
 		if (!hasPolygons) {
 			RemakePolygon();
 		}
-		AddToGroup(Id.ToString());
+		AddToGroup(LoadedSprite.Identification.ToString());
 		await ToSignal(GetTree().CreateTimer(0.1) , SceneTreeTimer.SignalName.Timeout);
-		if ( ParentId != 0 ) {
-			Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup(ParentId.ToString());
+		if ( LoadedSprite.ParentIdentification != 0 ) {
+			Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup(LoadedSprite.ParentIdentification.ToString());
 			GetParent().RemoveChild(this);
 			nodes[0].GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite").AddChild(this);
-			ParentSprite = nodes[0];
+			ParentSprite = nodes[0] as Sprite2D;
 			Owner = nodes[0].GetNode("WobbleOrigin/DragOrigin/Sprite");
 		}
 		SetClip(IsClipped);
@@ -179,7 +189,7 @@ public partial class SpriteObject : Sprite2D
             Global.ErrorHandler(imageLoadError);
             return;
         }
-        Path = newPath;
+        LoadedSprite.Path = newPath;
         ImageTexture texture = ImageTexture.CreateFromImage(image);
         Texture = texture;
         ImageData = image;
@@ -220,14 +230,14 @@ public partial class SpriteObject : Sprite2D
 	}
 	public void SetZLayer()
 	{
-		Sprite.ZIndex = ZLayer;
+		Sprite.ZIndex = LoadedSprite.ZLayer;
 	}
 	public void TalkBlink()
 	{
 		int editValue = Global.Main.EditMode ? 1 : 0;
 		int speakValue = Global.IsSpeaking ? 10 : 0;
 		int blinkValue = Global.IsBlinking ? 20 : 0;
-		int value = ( ShowOnTalk + ( ShowOnBlink * 3 ) ) + blinkValue + speakValue;
+		int value = ( LoadedSprite.ShowOnTalk + ( LoadedSprite.ShowOnBlink * 3 ) ) + blinkValue + speakValue;
 		double faded = 0.2 * editValue;
 		int containsInArr = new Godot.Collections.Array(){ 0 , 10 , 20 , 30 , 1 , 21 , 12 , 32 , 3 , 13 , 4 , 15 , 26 , 36 , 27 , 38 }.Contains(value) ? 1 : 0;
 		Color newColor = new Color(Sprite.SelfModulate , (float)Mathf.Max(containsInArr , faded));
@@ -275,22 +285,22 @@ public partial class SpriteObject : Sprite2D
 	}
 	public void Drag(double delta)
 	{
-		if(DragSpeed == 0) {
+		if( LoadedSprite.DragSpeed == 0) {
 			Dragger.GlobalPosition = WobbleOrigin.GlobalPosition;
 		}
 		else {
-			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , (float)(( delta * 20 ) / DragSpeed));
+			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , (float)(( delta * 20 ) / LoadedSprite.DragSpeed ));
 			DragOrigin.GlobalPosition = Dragger.GlobalPosition;
 		}
 	}
 	public void Wobble()
 	{
-		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * XFrequency) * XAmplification , MathF.Sin(Tick * YFrequency) * YAmplification);
+		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * LoadedSprite.XFrequency) * LoadedSprite.XAmplification , MathF.Sin(Tick * LoadedSprite.YFrequency) * LoadedSprite.YAmplification);
 		WobbleOrigin.Position = wavePosition;
 	}
 	public void RotationalDrag(float length,double delta)
 	{
-		float yVelocity = Mathf.Clamp(length * RotationalDragStrength , RotationaLimitMin , RotationaLimitMax);
+		float yVelocity = Mathf.Clamp(length * LoadedSprite.RotationalDragStrength , RotationaLimitMin , RotationaLimitMax);
 		Sprite.Rotation = (float) Mathf.LerpAngle((double)Sprite.Rotation , (double)Mathf.DegToRad(yVelocity) , 0.25);
 	}
 	public void Stretch(float length,double delta)
@@ -338,7 +348,7 @@ public partial class SpriteObject : Sprite2D
 		if(toggle) {
 			Sprite.ClipChildren = ClipChildrenMode.AndDraw;
 			foreach (SpriteObject node in GetAllLinkedSprites()) {
-				node.ZIndex = ZLayer;
+				node.ZIndex = LoadedSprite.ZLayer;
 				node.SetZLayer();
 			}
 		}
@@ -352,7 +362,7 @@ public partial class SpriteObject : Sprite2D
 		Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup("Saved");
 		Godot.Collections.Array<SpriteObject> linkedSprites = new Godot.Collections.Array<SpriteObject>();
 		foreach(SpriteObject node in nodes) {
-			if (node.ParentId == Id) {
+			if (node.LoadedSprite.ParentIdentification == LoadedSprite.Identification ) {
 				linkedSprites.Add(node);
 			}
 		}

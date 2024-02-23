@@ -4,12 +4,17 @@ using System;
 
 public partial class Main : Node2D
 {
+	public PackedScene SpriteObject { get; set; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SelectedSprite/SpriteObject.tscn");
 	public Node2D Origin { get; set; } = null;
 	public Node2D EditControls { get; set; } = null;
 	public Node2D ControlPanel { get; set; } = null;
 	public Node2D HowTo {  get; set; } = null;
 	public Node2D SpriteList { get; set; } = null;
 	public Node2D Lines { get; set; } = null;
+	public FileDialog FileDialog { get; set; } = null;
+	public FileDialog ReplaceDialog { get; set; } = null;
+	public FileDialog SaveDialog { get; set; } = null;
+	public FileDialog LoadDialog { get; set; } = null;
 	public float BounceChange { get; set; } = 0.0f;
 	public bool EditMode { get; set; } = true;
 	public bool IsFileSystemOpen { get; set; } = false;
@@ -29,6 +34,11 @@ public partial class Main : Node2D
 		HowTo = GetNode<Node2D>("HowTo");
 		SpriteList = GetNode<Node2D>("SpriteList");
 		Lines = GetNode<Node2D>("Lines");
+
+		FileDialog = GetNode<FileDialog>("FileDialog");
+		ReplaceDialog = GetNode<FileDialog>("ReplaceDialog");
+		SaveDialog = GetNode<FileDialog>("SaveDialog");
+		LoadDialog = GetNode<FileDialog>("LoadDialog");
         Global.Main = this;
         Global.Failed = GetNode<Node2D>("Failed");
         Global.StartSpeaking += OnSpeak;
@@ -64,4 +74,25 @@ public partial class Main : Node2D
 		Lines.Visible = EditMode;
 		SpriteList.Visible = EditMode;
     }
+	public void AddImage(string path)
+	{
+		SpriteObject sprite = SpriteObject.Instantiate<SpriteObject>();
+		SpriteData newSprite = new SpriteData();
+		newSprite.Path = path;
+		newSprite.Identification = 
+	}
+
+    #region Event responses
+
+	public void Event_AddButtonPressed()
+	{
+		FileDialog.Visible = true;
+	}
+
+	public void Event_FileDialogFileSelected(object sender, EventArgs e)
+	{
+		AddImage(Path);
+	}
+
+    #endregion
 }
