@@ -8,7 +8,8 @@ public partial class SpriteObject : Sprite2D
 {
 	public const byte SPRITE = 1;
 	public const byte ANIMATION = 2;
-	// Nodes
+
+	// Scene nodes
 	public PackedScene OutlineScene { get; set; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SelectedSprite/Outline.tscn");
 	public Sprite2D Sprite { get; set; } = null;
 	public Sprite2D OriginSprite { get; set; } = null;
@@ -16,13 +17,13 @@ public partial class SpriteObject : Sprite2D
 	public Node2D DragOrigin { get; set; } = null;
 	public Node2D Dragger { get; set; } = null;
 	public Node2D WobbleOrigin { get; set; } = null;
-	public SpriteData LoadedSprite { get; set; } = null;
 
+	// Sprite data
+	public SpriteDataClass LoadedSprite { get; set; } = null;
 
 	// Passed Variables
 	public Image ImageData { get; set; } = null;
-	public string LoadedImageData { get; set; } = null;
-	public ImageTexture ImgTexture { get; set; } = null;
+	public ImageTexture ImageTextureFromData { get; set; } = null;
 
 	public Sprite2D ParentSprite { get; set; } = null;
 	public Vector2 ImageSize { get; set; } = Vector2.Zero;
@@ -39,45 +40,9 @@ public partial class SpriteObject : Sprite2D
 	public int OriginTick { get; set; } = 0;
 
 
-	// Rotational drag
-	public Int16 RotationaLimitMax { get; set; } = 180;
-	public Int16 RotationaLimitMin { get; set; } = -180;
-
-	// Layer
-	public byte[] CostumeLayers { get; set; } = { 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 };
-
-	// Stretch
-	public float StretchAmount { get; set; } = 0.0f;
-
-	// Ignore bounce
-	public bool IgnoreBounce { get; set; } = false;
-
 	// Animation
-	public int Frames { get; set; } = 1;
-	public int AnimationSpeed { get; set; } = 0;
 	public bool RemadePolygon { get; set; } = false;
-	public bool IsClipped { get; set; } = false;
 	public int Tick { get; set; } = 0;
-
-	#region SpriteData
-	/*
-	public string Path { get; set; } = string.Empty;
-    public byte Type { get; set; } = SPRITE;
-    public int DragSpeed { get; set; } = 0;
-    public byte Identification { get; set; } = 0;
-    public byte ParentIdentification { get; set; } = 0;
-//  public Vector2 Offset { get; set; } = new Vector2(SpriteData.Offset[0],SpriteData.Offset[1]);
-//  public Vector2 Position { get; set; } = new Vector2)SpriteData.Position[0],SpriteData.Position[1]);
-    public int RotationalDragStrength { get; set; } = 0;
-    public byte ShowOnBlink { get; set; } = 0;
-    public byte ShowOnTalk { get; set; } = 0;
-    public float XFrequency { get; set; } = 0.0f;
-    public float YFrequency { get; set; } = 0.0f;
-    public float XAmplification { get; set; } = 0.0f;
-    public float YAmplification { get; set; } = 0.0f;
-    public byte ZLayer { get; set; } = 0;
-	*/
-    #endregion
 
 
     // Called when the node enters the scene tree for the first time.
@@ -92,15 +57,15 @@ public partial class SpriteObject : Sprite2D
 		Offset = new Vector2(1.0f , 1.0f);
 
 		Image image = new Image();
-		Error imageLoadError = image.Load(LoadedSprite.Path);
+		Error imageLoadError = image.Load(LoadedSprite.FilePath);
 		if(imageLoadError != Error.Ok) {
-			if (LoadedImageData == null) {
+			if ( LoadedSprite.Base64ImageData == string.Empty) {
 				Global.ErrorHandler(imageLoadError);
 				this.Dispose();
 				return;
 			}
 			else {
-				byte[] data = Marshalls.Base64ToRaw(LoadedImageData);
+				byte[] data = Marshalls.Base64ToRaw(LoadedSprite.Base64ImageData);
 				Error bufferLoadError = image.LoadPngFromBuffer(data);
 				if ( bufferLoadError != Error.Ok) {
 					Global.ErrorHandler(bufferLoadError);

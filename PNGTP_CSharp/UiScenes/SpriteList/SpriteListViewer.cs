@@ -7,7 +7,7 @@ public partial class SpriteListViewer : Node2D
 {
     public PackedScene SpriteListObject { get; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SpriteList/SpriteListObject.tscn");
     public VBoxContainer Container { get; set; } = null;
-    public SpriteData Sprite { get; set; } = null;
+    public SpriteDataClass Sprite { get; set; } = null;
 
     public override void _Ready()
     {

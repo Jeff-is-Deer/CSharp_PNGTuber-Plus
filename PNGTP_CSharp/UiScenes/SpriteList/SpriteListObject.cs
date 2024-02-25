@@ -11,6 +11,9 @@ public partial class SpriteListObject : NinePatchRect
     public Line2D Line { get; set; } = null;
     public SpriteObject Sprite { get; set; } = null;
     public string SpritePath { get; set; } = string.Empty;
+    public int IndentLayer { get; set; } = 0;
+    public 
+
 
     public void _Ready()
     {
@@ -37,6 +40,10 @@ public partial class SpriteListObject : NinePatchRect
     public void UpdateVisibility()
     {
         Fade.Visible = !SpritePreview.Visible;
+    }
+    public void UpdateChildren()
+    {
+        foreach()
     }
 
     public void Event_ButtonPressed()

@@ -22,8 +22,10 @@ script = ExtResource("1_bghpe")
 [node name="OriginMotion" type="Node2D" parent="."]
 
 [node name="Origin" type="Node2D" parent="OriginMotion"]
+position = Vector2(360, 360)
 
 [node name="ControlPanel" type="Node2D" parent="."]
+position = Vector2(720, 720)
 script = ExtResource("2_j88lc")
 
 [node name="MicInputSelect" type="Node2D" parent="ControlPanel"]
@@ -262,8 +264,7 @@ offset_bottom = 23.0
 [node name="Arrows2" type="Sprite2D" parent="ViewerArrows"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-
-[node name="BackgroundInputCapture" type="Node" parent="."]
+position = Vector2(360, 360)
 
 [node name="PushUpdates" type="Node2D" parent="."]
 
