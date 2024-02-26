@@ -21,13 +21,13 @@ public partial class SpriteViewer : Node2D
 
     public void SetImage()
     {
-        if(Global.HeldSprite == null) { return; }
-        float spriteYLen = Global.HeldSprite.ImageData.GetSize().Y;
-        SpriteSpin.Texture = Global.HeldSprite.Texture; // i think i may have overcomplicated the object structure.  may need complete rework.
+        if(Global.SelectedSprite == null) { return; }
+        float spriteYLen = Global.SelectedSprite.ImageData.GetSize().Y;
+        SpriteSpin.Texture = Global.SelectedSprite.Texture; // i think i may have overcomplicated the object structure.  may need complete rework.
         SpriteSpin.PixelSize = 1.5f / spriteYLen;
-        SpriteSpin.Hframes = Global.HeldSprite.Frames;
-        SpriteRotationalDisplay.Texture = Global.HeldSprite.Texture;
-        SpriteRotationalDisplay.Offset = Global.HeldSprite.Offset;
+        SpriteSpin.Hframes = Global.SelectedSprite.Frames;
+        SpriteRotationalDisplay.Texture = Global.SelectedSprite.Texture;
+        SpriteRotationalDisplay.Offset = Global.SelectedSprite.Offset;
         SpriteRotationalDisplay.Scale = new Vector2(1.0f , 1.0f) * ( 150.0f / spriteYLen );
 
         /* ----------------------------------- ^/

@@ -89,7 +89,7 @@ public partial class EditControls : Node2D
             }
 			spriteIndex++;
 		}
-		Color newColor = Global.HeldSprite == null ? new Color(0.184314f , 0.309804f , 0.309804f) : new Color(1,1,1);
+		Color newColor = Global.SelectedSprite == null ? new Color(0.184314f , 0.309804f , 0.309804f) : new Color(1,1,1);
 
 		LinkSprite.GetParent<Sprite2D>().Modulate = newColor;
 		ReplicateSprite.GetParent<Sprite2D>().Modulate = newColor;

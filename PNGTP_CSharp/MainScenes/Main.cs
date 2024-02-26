@@ -60,7 +60,7 @@ public partial class Main : Node2D
 
     public void SwapMode()
     {
-        Global.HeldSprite = null;
+        Global.SelectedSprite = null;
         EditMode = !EditMode;
         if ( Global.BackgroundColor.A != 0.0f ) {
             GetViewport().TransparentBg = false;

@@ -19,7 +19,7 @@ public partial class SpriteObject : Sprite2D
 	public Node2D WobbleOrigin { get; set; } = null;
 
 	// Sprite data
-	public SpriteDataClass LoadedSprite { get; set; } = null;
+	public SpriteData SpriteData { get; set; } = null;
 
 	// Passed Variables
 	public Image ImageData { get; set; } = null;
@@ -57,15 +57,15 @@ public partial class SpriteObject : Sprite2D
 		Offset = new Vector2(1.0f , 1.0f);
 
 		Image image = new Image();
-		Error imageLoadError = image.Load(LoadedSprite.FilePath);
+		Error imageLoadError = image.Load(SpriteData.FilePath);
 		if(imageLoadError != Error.Ok) {
-			if ( LoadedSprite.Base64ImageData == string.Empty) {
+			if ( SpriteData.Base64ImageData == string.Empty) {
 				Global.ErrorHandler(imageLoadError);
 				this.Dispose();
 				return;
 			}
 			else {
-				byte[] data = Marshalls.Base64ToRaw(LoadedSprite.Base64ImageData);
+				byte[] data = Marshalls.Base64ToRaw(SpriteData.Base64ImageData);
 				Error bufferLoadError = image.LoadPngFromBuffer(data);
 				if ( bufferLoadError != Error.Ok) {
 					Global.ErrorHandler(bufferLoadError);
@@ -85,6 +85,7 @@ public partial class SpriteObject : Sprite2D
 		bool hasPolygons = polygons.Count > 0;
 		foreach ( Vector2[] polygon in polygons) {
 			CollisionPolygon2D collider = new CollisionPolygon2D();
+			
 			collider.Polygon = polygon;
 			GrabArea.AddChild(collider);
 			Line2D outline = OutlineScene.Instantiate<Line2D>();
@@ -98,22 +99,22 @@ public partial class SpriteObject : Sprite2D
 		GrabArea.Position = ( Size * -0.5f ) + Offset;
 		ChangeFrames();
 		SetZLayer();
-		if(Frames > 1) {
+		if(SpriteData.Frames > 1) {
 			RemakePolygon();
 		}
 		if (!hasPolygons) {
 			RemakePolygon();
 		}
-		AddToGroup(LoadedSprite.Identification.ToString());
+		AddToGroup(SpriteData.ID.ToString());
 		await ToSignal(GetTree().CreateTimer(0.1) , SceneTreeTimer.SignalName.Timeout);
-		if ( LoadedSprite.ParentIdentification != 0 ) {
-			Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup(LoadedSprite.ParentIdentification.ToString());
+		if ( SpriteData.PID != 0 ) {
+			Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup(SpriteData.PID.ToString());
 			GetParent().RemoveChild(this);
 			nodes[0].GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite").AddChild(this);
 			ParentSprite = nodes[0] as Sprite2D;
 			Owner = nodes[0].GetNode("WobbleOrigin/DragOrigin/Sprite");
 		}
-		SetClip(IsClipped);
+		SetClip(SpriteData.IsClipped);
 		if (Global.Filtering) {
 			Sprite.TextureFilter = TextureFilterEnum.Linear;
 		}
@@ -123,7 +124,7 @@ public partial class SpriteObject : Sprite2D
     public override void _Process(double delta)
 	{
 		Tick += 1;
-		if (Global.HeldSprite == this) {
+		if (Global.SelectedSprite == this) {
 			GrabArea.Visible = true;
 			OriginSprite.Visible = true;
 		}
@@ -132,7 +133,7 @@ public partial class SpriteObject : Sprite2D
 			OriginSprite.Visible = false;
 		}
 		Vector2 draggerGlobalPos = Dragger.GlobalPosition;
-		if (IgnoreBounce) {
+		if (SpriteData.IgnoresBounce) {
 			draggerGlobalPos.Y -= Global.Main.BounceChange;
 		}
 		Drag(delta);
@@ -154,7 +155,7 @@ public partial class SpriteObject : Sprite2D
             Global.ErrorHandler(imageLoadError);
             return;
         }
-        LoadedSprite.Path = newPath;
+        SpriteData.FilePath = newPath;
         ImageTexture texture = ImageTexture.CreateFromImage(image);
         Texture = texture;
         ImageData = image;
@@ -185,24 +186,24 @@ public partial class SpriteObject : Sprite2D
 
     public void Animation()
 	{
-		float speed = Mathf.Max(AnimationSpeed , Engine.MaxFps * 6.0f); 
-		if(AnimationSpeed > 0 && Frames > 1 && Global.AnimationTick % (int)(speed / (float)AnimationSpeed) == 0) {
-			Sprite.Frame = Sprite.Frame == Frames - 1 ? 0 : Sprite.Frame + 1;
+		float speed = Mathf.Max(SpriteData.AnimationSpeed , Engine.MaxFps * 6.0f); 
+		if( SpriteData.AnimationSpeed > 0 && SpriteData.Frames > 1 && Global.AnimationTick % (int)(speed / (float) SpriteData.AnimationSpeed ) == 0) {
+			Sprite.Frame = Sprite.Frame == SpriteData.Frames - 1 ? 0 : Sprite.Frame + 1;
 		}
-		if (Frames > 1) {
+		if ( SpriteData.Frames > 1) {
 			RemakePolygon();
 		}
 	}
 	public void SetZLayer()
 	{
-		Sprite.ZIndex = LoadedSprite.ZLayer;
+		Sprite.ZIndex = SpriteData.ZLayer;
 	}
 	public void TalkBlink()
 	{
 		int editValue = Global.Main.EditMode ? 1 : 0;
 		int speakValue = Global.IsSpeaking ? 10 : 0;
 		int blinkValue = Global.IsBlinking ? 20 : 0;
-		int value = ( LoadedSprite.ShowOnTalk + ( LoadedSprite.ShowOnBlink * 3 ) ) + blinkValue + speakValue;
+		int value = ( SpriteData.ShowOnTalk + ( SpriteData.ShowOnBlink * 3 ) ) + blinkValue + speakValue;
 		double faded = 0.2 * editValue;
 		int containsInArr = new Godot.Collections.Array(){ 0 , 10 , 20 , 30 , 1 , 21 , 12 , 32 , 3 , 13 , 4 , 15 , 26 , 36 , 27 , 38 }.Contains(value) ? 1 : 0;
 		Color newColor = new Color(Sprite.SelfModulate , (float)Mathf.Max(containsInArr , faded));
@@ -210,7 +211,7 @@ public partial class SpriteObject : Sprite2D
 	}
 	public void PhysicsProcess()
 	{
-		if (Global.HeldSprite == null ) {
+		if (Global.SelectedSprite == null ) {
 			Vector2 direction = PressingDirection();
 			if (Input.IsActionPressed("Origin")) {
 				MoveOrigin(direction);
@@ -250,27 +251,27 @@ public partial class SpriteObject : Sprite2D
 	}
 	public void Drag(double delta)
 	{
-		if( LoadedSprite.DragSpeed == 0) {
+		if( SpriteData.DragSpeed == 0) {
 			Dragger.GlobalPosition = WobbleOrigin.GlobalPosition;
 		}
 		else {
-			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , (float)(( delta * 20 ) / LoadedSprite.DragSpeed ));
+			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , (float)(( delta * 20 ) / SpriteData.DragSpeed ));
 			DragOrigin.GlobalPosition = Dragger.GlobalPosition;
 		}
 	}
 	public void Wobble()
 	{
-		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * LoadedSprite.XFrequency) * LoadedSprite.XAmplification , MathF.Sin(Tick * LoadedSprite.YFrequency) * LoadedSprite.YAmplification);
+		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * SpriteData.XFrequency) * SpriteData.XAmplification , MathF.Sin(Tick * SpriteData.YFrequency) * SpriteData.YAmplification);
 		WobbleOrigin.Position = wavePosition;
 	}
 	public void RotationalDrag(float length,double delta)
 	{
-		float yVelocity = Mathf.Clamp(length * LoadedSprite.RotationalDragStrength , RotationaLimitMin , RotationaLimitMax);
+		float yVelocity = Mathf.Clamp(length * SpriteData.RotationalDragStrength , SpriteData.RotationalLimitMinimum , SpriteData.RotationalLimitMaximum);
 		Sprite.Rotation = (float) Mathf.LerpAngle((double)Sprite.Rotation , (double)Mathf.DegToRad(yVelocity) , 0.25);
 	}
 	public void Stretch(float length,double delta)
 	{
-		float yVelocity = ( length * StretchAmount * 0.1f );
+		float yVelocity = ( length * SpriteData.StretchAmount * 0.1f );
 		Vector2 target = new Vector2(1.0f -  yVelocity , 1.0f + yVelocity );
 		Sprite.Scale = Sprite.Scale.Lerp(target , 0.5f);
 	}
@@ -280,7 +281,7 @@ public partial class SpriteObject : Sprite2D
 	}
 	public void ChangeFrames()
 	{
-		Sprite.Hframes = Frames;
+		Sprite.Hframes = SpriteData.Frames;
 		Sprite.Frame = 0;
 	}
 	public void RemakePolygon()
@@ -313,21 +314,21 @@ public partial class SpriteObject : Sprite2D
 		if(toggle) {
 			Sprite.ClipChildren = ClipChildrenMode.AndDraw;
 			foreach (SpriteObject node in GetAllLinkedSprites()) {
-				node.ZIndex = LoadedSprite.ZLayer;
+				node.ZIndex = SpriteData.ZLayer;
 				node.SetZLayer();
 			}
 		}
 		else {
 			Sprite.ClipChildren = ClipChildrenMode.Disabled;
 		}
-		IsClipped = toggle;
+        SpriteData.IsClipped = toggle;
 	}
 	public Godot.Collections.Array<SpriteObject> GetAllLinkedSprites()
 	{
 		Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup("Saved");
 		Godot.Collections.Array<SpriteObject> linkedSprites = new Godot.Collections.Array<SpriteObject>();
 		foreach(SpriteObject node in nodes) {
-			if (node.LoadedSprite.ParentIdentification == LoadedSprite.Identification ) {
+			if (node.SpriteData.PID == SpriteData.ID ) {
 				linkedSprites.Add(node);
 			}
 		}

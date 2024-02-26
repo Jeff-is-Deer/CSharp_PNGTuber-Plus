@@ -13,7 +13,7 @@ public partial class GlobalClass : Node
     public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
 	public SpriteListViewer SpriteList { set; get; } = null;
-	public SpriteObject HeldSprite { get; set; } = null;
+	public SpriteObject SelectedSprite { get; set; } = null;
 	public AudioStreamPlayer CurrentMicrophone { set; get; } = null;
 	public Node2D Failed { get; set; } = null;
 	public Chain Chain { set; get; } = null;
@@ -68,10 +68,10 @@ public partial class GlobalClass : Node
 				EmitSignal(SignalName.StopSpeaking);
 			}
 		}
-		if (Main != null && HeldSprite != null) {
+		if (Main != null && SelectedSprite != null) {
 			if ( Input.IsActionJustPressed("zDown")) {
-				HeldSprite.LoadedSprite.ZLayer -= 1;
-				HeldSprite.SetZLayer();
+				SelectedSprite.SpriteData.ZLayer -= 1;
+				SelectedSprite.SetZLayer();
 				PushUpdate("Moved sprite layer.");
 			}
 		}
@@ -150,7 +150,7 @@ public partial class GlobalClass : Node
 				return;
 			}
 		}
-		var PreviousSprite = HeldSprite;
+		var PreviousSprite = SelectedSprite;
 	}
 
 	public void PushUpdate(string message)

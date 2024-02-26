@@ -12,10 +12,9 @@ public partial class SpriteListObject : NinePatchRect
     public SpriteObject Sprite { get; set; } = null;
     public string SpritePath { get; set; } = string.Empty;
     public int IndentLayer { get; set; } = 0;
-    public 
 
 
-    public void _Ready()
+    public override void _Ready()
     {
         Sprite = new SpriteObject();
         SpritePreview = GetNode<Sprite2D>("SpritePreview/Sprite2D");
@@ -26,16 +25,11 @@ public partial class SpriteListObject : NinePatchRect
         byte spriteCount = (byte)SpritePath.Split('/').Length;
         SpriteLabel.Text = SpritePath.Split('/')[spriteCount];
         Line.Visible = false;
-
-        SpritePreview.Texture = Sprite
-
-
-
     }
 
     public void _Process()
     {
-        Outline.Visible = Sprite == Global.HeldSprite;
+        Outline.Visible = Sprite == Global.SelectedSprite;
     }
     public void UpdateVisibility()
     {
@@ -43,13 +37,12 @@ public partial class SpriteListObject : NinePatchRect
     }
     public void UpdateChildren()
     {
-        foreach()
     }
 
     public void Event_ButtonPressed()
     {
-        if(Global.HeldSprite != null && Global.ReparentingMode) {
-            Global.LinkSprite(Global.HeldSprite , Sprite);
+        if(Global.SelectedSprite != null && Global.ReparentingMode) {
+            //Global.LinkSprite(Global.SelectedSprite , Sprite);
             Global.Chain.Enable(true);
         }
 

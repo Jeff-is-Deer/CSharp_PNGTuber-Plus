@@ -7,7 +7,7 @@ public partial class SpriteListViewer : Node2D
 {
     public PackedScene SpriteListObject { get; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SpriteList/SpriteListObject.tscn");
     public VBoxContainer Container { get; set; } = null;
-    public SpriteDataClass Sprite { get; set; } = null;
+    public AvatarPiece Sprite { get; set; } = null;
 
     public override void _Ready()
     {
@@ -24,7 +24,7 @@ public partial class SpriteListViewer : Node2D
         Array<SpriteListObject> parsedSprites = new Array<SpriteListObject>();
         foreach(SpriteObject sprite in allSprites) {
             SpriteListObject spriteListObject = SpriteListObject.Instantiate<SpriteListObject>();
-            spriteListObject.SpritePath = sprite.LoadedSprite.Path;
+            spriteListObject.SpritePath = sprite.SpriteData.Path;
             spriteListObject.Sprite = Sprite;
             spriteListObject.Sprite.ParentIdentification = Sprite.ParentIdentification;
             if(Sprite.Identification != 0) {

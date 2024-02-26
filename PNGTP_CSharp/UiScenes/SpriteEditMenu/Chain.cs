@@ -21,8 +21,8 @@ public partial class Chain : Node2D
 
     public void RenderPoints()
     {
-        if(Global.HeldSprite != null) {
-            GlobalPosition = Global.HeldSprite.GlobalPosition;
+        if(Global.SelectedSprite != null) {
+            GlobalPosition = Global.SelectedSprite.GlobalPosition;
         }
         Line.ClearPoints();
         Line.AddPoint(Vector2.Zero);

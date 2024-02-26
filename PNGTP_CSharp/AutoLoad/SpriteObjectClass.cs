@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class SpriteDataClass
+public class SpriteData
 {
     public byte ID { get; set; }
     public byte PID { get; set; }
@@ -9,6 +9,7 @@ public class SpriteDataClass
     public string Base64ImageData { get; set; }
     public float[] Offset { get; set; } // Vector2
     public float[] Position { get; set; } // Vector2
+    public int Frames { get; set; }
     public int AnimationSpeed { get; set; }
     public bool IsClipped { get; set; }
     public bool IgnoresBounce { get; set; }
@@ -16,7 +17,7 @@ public class SpriteDataClass
     public int NumberOfFrames { get; set; }
     public Int16 RotationalLimitMaximum { get; set; }
     public Int16 RotationalLimitMinimum { get; set; }
-    public int Drag { get; set; }
+    public int DragSpeed { get; set; }
     public int RotationalDragStrength {  get; set; }
     public float StretchAmount {  get; set; }
     public int XAmplification { get; set; }

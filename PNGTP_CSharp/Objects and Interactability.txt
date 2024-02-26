@@ -1,0 +1,77 @@
+OBJECTS:
+- Avatar
+    - Contains all AvatarPart instances.  Will contain methods that can add, remove, and adjust individual properties of the AvatarPiece that is selected in the editor.
+    - Properties:
+        - List<AvatarPart> Parts
+            - Includes all AvatarPart instances that make up the PNG avatar.  Will be loaded and sorted by layer.
+        - AvatarPart SelectedPart
+            - Represents the currently selected part within the edit window.
+    
+    - Methods:
+        - Error LoadImage(string filePath)
+            - Loads an image from an operating system filepath
+        - Error LoadImage(byte[] avatarPartData)
+            - Loads an image from byte array
+        - Base64ImageDataToRaw(string base64)
+            - Deserializes Base64 string of an ImageData class to a raw byte array
+        - 
+
+
+- AvatarPart
+    - Can be serialized for saving and deserialized for loading within Newtonsoft.Json.
+    - Contains all relavant data for a section of the user's avatar.  This could be anything from the torso to an eyebrow.  It must contain the following:
+        - string FilePath 
+            - Represents the file path the image is located locally
+        - byte ID
+            - The image's unique identifier
+        - byte PID
+            - The image's "parent" unique identifier.  This will match the connected image's ID
+        - byte Type 
+            - The image's type.  It can be a sprite or an animation
+        - string Base64ImageData
+            - The image data represented by a Base64 string.  This will be interpreted by `byte[] Marshalls.Base64ToRaw(string Base64ImageData)` and `Error Image.LoadPngFromBuffer(byte[] Raw)`
+        - float[2] ApdOffset
+            - Will only have 2 indeces.  Will be used as the Vector2 Sprite2D.Offset with X and Y being index 0 and 1 respectively
+        - float[2] ApdPosition
+            - Will only have 2 indeces.  Will be used as the Vector2 Sprite2D.Position with X and Y being index 0 and 1 respectively
+        - int NumberOfFrames
+            - Indicates the number of frames the sprite animation has
+        - int AnimationSpeed
+            - Speed of sprite's animation
+        - bool IsClipped
+            - Whether or not the sprite is clipped with its parent/children
+        - bool IgnoresBounce
+            - Whether or not the sprite ignores bounce physics
+        - bool[10] VisibleOnCostumeLayer
+            - Array of 10 boolean values (one for each costume set) for whether or not the currently selected sprite will be visible on that costume set
+        - Int16 RotationalLimitMaximum
+            - Value between 0 and 180.  Determines the maximum angle between 0 and 180 that the sprite will rotate counter clock-wise
+        - Int16 RotationalLimitMinimum
+            - Value between -180 and 0.  Determines the minimum angle between 180 and 360 that the sprite will rotate clock-wise
+        - int DragSpeed
+            - Speed of the sprite's drag when affected by movement
+        - int RotationalDragStrength
+            - Strength of the sprite's drag effect
+        - float StretchAmount
+            - The total amount of stretching the sprite will do on either the X or Y axis when affected by movement
+        - int XAmplitude
+            - The amount the sprite will oscillate on the X-axis
+        - int YAmplitude
+            - The amount the sprite will oscillate on the Y-axis
+        - float XFrequency
+            - The speed in which the sprite will oscillate on the X-axis
+        - float YFrequency
+            - The speed in which the sprite will oscillate on the Y-axis
+        - byte ShowOnBlink
+            - One of three values:
+                - 0: Show on both blink and !blink
+                - 1: Show on only blink
+                - 2: Show on only !blink
+        - byte ShowOnTalk
+            - One of three values:
+                - 0: Show on both talk and !talk
+                - 1: Show on only talk
+                - 2: Show on only !talk
+        - byte ZLayer:
+            - The layer of the sprite.  Can have up to 256 different layers
+
