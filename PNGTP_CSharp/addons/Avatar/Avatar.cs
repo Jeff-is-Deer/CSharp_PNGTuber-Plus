@@ -22,6 +22,7 @@ public partial class Avatar : Sprite2D
         SaveFailed += event_AvatarSaveFailed;
         Parts = Load();
     }
+
 #nullable enable
     public Image? GetImageFromPath(string filePath)
     {
@@ -78,7 +79,7 @@ public partial class Avatar : Sprite2D
         }
         return result;
     }
-    public void event_ImageLoadFailed(string error)
+    private void event_ImageLoadFailed(string error)
     {
         if( Enum.TryParse(error, out Error result) ) {
             Global.ErrorHandler(result);
@@ -87,11 +88,11 @@ public partial class Avatar : Sprite2D
             Global.ErrorHandler(Error.PrinterOnFire);
         }
     }
-    public void event_AvatarSaveFailed()
+    private void event_AvatarSaveFailed()
     {
 
     }
-    public void event_AvatarLoadFailed()
+    private void event_AvatarLoadFailed()
     {
 
     }

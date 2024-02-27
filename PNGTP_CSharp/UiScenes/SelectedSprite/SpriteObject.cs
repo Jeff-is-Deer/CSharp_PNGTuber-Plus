@@ -4,14 +4,13 @@ using Godot;
 using static GlobalClass;
 using System;
 
-public partial class SpriteObject : Sprite2D
+public partial class AvatarSprite : AvatarPart
 {
 	public const byte SPRITE = 1;
 	public const byte ANIMATION = 2;
 
 	// Scene nodes
 	public PackedScene OutlineScene { get; set; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SelectedSprite/Outline.tscn");
-	public Sprite2D Sprite { get; set; } = null;
 	public Sprite2D OriginSprite { get; set; } = null;
 	public Area2D GrabArea { get; set; } = null;
 	public Node2D DragOrigin { get; set; } = null;
@@ -30,8 +29,8 @@ public partial class SpriteObject : Sprite2D
 
 	// Visuals
 	public Vector2 MouseOffset { get; set; } = Vector2.Zero;
-	public int GrabDelay { get; set; } = 0;
 	public Vector2 Size { get; set; } = new Vector2(1 , 1);
+	public int GrabDelay { get; set; } = 0;
 
 	// Movement
 	public int HeldTicks { get; set; } = 0;

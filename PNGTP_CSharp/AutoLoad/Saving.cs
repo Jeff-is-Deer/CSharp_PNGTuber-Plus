@@ -6,7 +6,7 @@ public partial class Saving : Node
 	public AvatarData Default { get; } = null;
 	public string Key { get; } = "creature";
 	public string SettingsPath { get; } = "user://settings.pngtp";
-
+	/*
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -23,7 +23,6 @@ public partial class Saving : Node
 	public override void _Process(double delta)
 	{
 	}
-
 	public AvatarData? ReadSave(string path)
 	{
 		if (path == "default") {
@@ -36,4 +35,5 @@ public partial class Saving : Node
 			}
 		}
 	}
+	*/
 }

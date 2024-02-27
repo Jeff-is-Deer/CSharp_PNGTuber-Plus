@@ -13,7 +13,7 @@ public partial class GlobalClass : Node
     public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
 	public SpriteListViewer SpriteList { set; get; } = null;
-	public SpriteObject SelectedSprite { get; set; } = null;
+	public AvatarSprite SelectedSprite { get; set; } = null;
 	public AudioStreamPlayer CurrentMicrophone { set; get; } = null;
 	public Node2D Failed { get; set; } = null;
 	public Chain Chain { set; get; } = null;
@@ -42,8 +42,6 @@ public partial class GlobalClass : Node
 	{
 		Global = this;
 		Spectrum = AudioServer.GetBusEffectInstance(1 , 1) as AudioEffectSpectrumAnalyzerInstance;
-
-		if (!Saving.Settings)
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -84,34 +82,35 @@ public partial class GlobalClass : Node
 		if(Failed == null) {
 			return;
 		}
-		Failed.GetNode<Label>("ErrorType").Text = string.Empty;
+		string errorMessage = string.Empty;
 		switch(error) {
 			case Error.FileCorrupt:
-				Failed.GetNode<Label>("ErrorType").Text = "File corrupt";
+                errorMessage = "File corrupt";
                 break;
 			case Error.FileNotFound:
-				Failed.GetNode<Label>("ErrorType").Text = "File not found";
+                errorMessage = "File not found";
                 break;
 			case Error.FileCantOpen:
-				Failed.GetNode<Label>("ErrorType").Text = "File can't open";
+                errorMessage = "File can't open";
                 break;
 			case Error.FileAlreadyInUse:
-				Failed.GetNode<Label>("ErrorType").Text = "File in use";
+                errorMessage = "File in use";
                 break;
 			case Error.FileNoPermission:
-				Failed.GetNode<Label>("ErrorType").Text = "Missing permission";
+                errorMessage = "Missing permission";
                 break;
 			case Error.InvalidData:
-				Failed.GetNode<Label>("ErrorType").Text = "Data invalid";
+                errorMessage = "Data invalid";
                 break;
 			case Error.FileCantRead:
-				Failed.GetNode<Label>("ErrorType").Text = "Can't read file";
+                errorMessage = "Can't read file";
                 break;
 			case Error.PrinterOnFire:
-				Failed.GetNode<Label>("ErrorType").Text = "Unknown error";
+				errorMessage = "Unknown error";
 				break;
 		}
-		Failed.Visible = true;
+		Failed.GetNode<Label>("ErrorType").Text = errorMessage;
+        Failed.Visible = true;
 		await ToSignal(GetTree().CreateTimer(3) , SceneTreeTimer.SignalName.Timeout);
 		Failed.Visible = false;
 	}

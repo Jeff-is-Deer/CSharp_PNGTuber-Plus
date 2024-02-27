@@ -15,7 +15,7 @@ public partial class AvatarPlugin : EditorPlugin
     public override void _ExitTree()
     {
         // Clean-up of the plugin goes here.
-        RemoveCustomType("AvatarPiece");
+        RemoveCustomType("Avatar");
     }
 }
 #endif
