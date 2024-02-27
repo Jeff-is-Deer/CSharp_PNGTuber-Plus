@@ -4,6 +4,7 @@ public partial class AvatarPart : Sprite2D
 {
     public byte ID { get; set; }
     public byte PID { get; set; }
+    byte[] Children { get; set; }
     public string FilePath { get; set; }
     public byte Type { get; set; } // Enum Type
     public string Base64ImageData { get; set; }

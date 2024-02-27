@@ -61,7 +61,7 @@ public partial class SpriteObject : Sprite2D
 		if(imageLoadError != Error.Ok) {
 			if ( SpriteData.Base64ImageData == string.Empty) {
 				Global.ErrorHandler(imageLoadError);
-				this.Dispose();
+				this.QueueFree();
 				return;
 			}
 			else {
