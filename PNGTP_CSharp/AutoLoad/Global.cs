@@ -107,6 +107,9 @@ public partial class GlobalClass : Node
 			case Error.FileCantRead:
 				Failed.GetNode<Label>("ErrorType").Text = "Can't read file";
                 break;
+			case Error.PrinterOnFire:
+				Failed.GetNode<Label>("ErrorType").Text = "Unknown error";
+				break;
 		}
 		Failed.Visible = true;
 		await ToSignal(GetTree().CreateTimer(3) , SceneTreeTimer.SignalName.Timeout);
