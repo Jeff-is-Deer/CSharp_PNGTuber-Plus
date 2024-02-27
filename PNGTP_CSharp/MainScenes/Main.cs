@@ -78,7 +78,7 @@ public partial class Main : Node2D
     {
         SpriteObject sprite = SpriteObject.Instantiate<SpriteObject>();
         SpriteData newSprite = new SpriteData();
-        newSprite.Path = path;
+        //newSprite.Path = path;
         //newSprite.Identification = 
     }
 
