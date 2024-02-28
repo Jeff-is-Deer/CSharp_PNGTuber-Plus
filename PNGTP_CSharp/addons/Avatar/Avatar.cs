@@ -5,7 +5,13 @@ using static GlobalClass;
 
 public partial class Avatar : Node2D
 {
-    public static Dictionary<byte , AvatarPart> Parts { get; set; } 
+    public static Dictionary<byte , AvatarPart> Parts { get; set; }
+    public bool IsBlinking { get; set; }
+    public bool BounceOnCostumeChange { get; set; }
+    public int BounceStrength { get; set; }
+    public int Gravity {  get; set; }
+    public int BlinkChance { get; set; }
+    public float BlinkSpeed {  get; set; }
 
 
 #nullable enable

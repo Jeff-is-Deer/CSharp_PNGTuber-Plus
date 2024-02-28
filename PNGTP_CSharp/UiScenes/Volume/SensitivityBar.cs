@@ -2,10 +2,10 @@
 using Godot;
 using static GlobalClass;
 
-public partial class SensitivitySlider : HSlider
+public partial class SensitivityBar : TextureProgressBar
 {
     public override void _Process(double delta)
     {
-        Global.MicrophoneListener.VolumeSensitivity = MaxValue - Value;
+        Value = Global.MicrophoneListener.VolumeSensitivity;
     }
 }

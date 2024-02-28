@@ -25,16 +25,24 @@ public partial class MicrophoneListener : Node
         StartSpeaking += event_StartSpeaking;
         StopSpeaking += event_StopSpeaking;
         SpectrumAnalyzerInstance = AudioServer.GetBusEffectInstance(1 , 1) as AudioEffectSpectrumAnalyzerInstance;
+    }
 
+    public void ProcessMicrophoneInput()
+    {
+        Volume = SpectrumAnalyzerInstance.GetMagnitudeForFrequencyRange(20.0f , 20000.0f).Length();
+    }
+    public void CalculateVolumeSensitivity(double delta)
+    {
+        VolumeSensitivity = Mathf.Lerp(VolumeSensitivity , 0.0 , delta * 2);
     }
 
     public async void CreateMicrophone()
     {
-        Player = new AudioStreamPlayer();
-        Microphone = new AudioStreamMicrophone();
-        Player.Stream = Microphone;
-        Player.Autoplay = true;
-        Player.Bus = "Record";
+        Player = new AudioStreamPlayer {
+            Stream = new AudioStreamMicrophone() ,
+            Autoplay = true ,
+            Bus = "Record"
+        };
         GlobalClass.Global.AddChild(Player);
         CurrentMicrophone = Player;
         await ToSignal(GetTree().CreateTimer(MicrophoneResetTime) , SceneTreeTimer.SignalName.Timeout);
@@ -44,13 +52,14 @@ public partial class MicrophoneListener : Node
         DeleteAllMicrophones();
         CurrentMicrophone.Dispose();
         CurrentMicrophone = null;
+        await ToSignal(GetTree().CreateTimer(0.25) , SceneTreeTimer.SignalName.Timeout);
         CreateMicrophone();
     }
 
     private void DeleteAllMicrophones()
     {
         foreach ( Node child in GlobalClass.Global.GetChildren() ) {
-            child.Dispose();
+            child.QueueFree();
         }
     }
 

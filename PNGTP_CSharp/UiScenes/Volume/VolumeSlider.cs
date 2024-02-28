@@ -6,7 +6,6 @@ public partial class VolumeSlider : HSlider
 {
     public override void _Process(double delta)
     {
-        Global.VolumeLimit = MaxValue - Value;
-        FileHandling.Settings.Volume = Value;
+        Global.MicrophoneListener.VolumeLimit = MaxValue - Value;
     }
 }

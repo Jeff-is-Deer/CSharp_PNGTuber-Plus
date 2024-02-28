@@ -10,56 +10,49 @@ public partial class GlobalClass : Node
 	public delegate void StopSpeakingEventHandler();
 
 	public static GlobalClass Global { get; set; } = null;
+	public Avatar UserAvatar { get; set; }
+	public MicrophoneListener MicrophoneListener { get; set; }
     public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
 	public SpriteListViewer SpriteList { set; get; } = null;
 	public AvatarSprite SelectedSprite { get; set; } = null;
-	public AudioStreamPlayer CurrentMicrophone { set; get; } = null;
 	public Node2D Failed { get; set; } = null;
 	public Chain Chain { set; get; } = null;
 	public PushUpdates UpdatePusherNode { set; get; } = null;
-	public AudioEffectSpectrumAnalyzerInstance Spectrum { set; get; } = null;
 	public SpriteViewer SpriteEdit { set; get; } = null;
 	public Color BackgroundColor { get; set; } = new Color(0.0f , 0.0f , 0.0f , 0.0f);
     public bool Filtering { get; set; } = false;
-	public bool IsSpeaking { get; set; } = false;
-	public bool IsBlinking { get; set; } = false;
 	public bool ReparentingMode { get; set; } = false;
 
 	public string PrimaryNodeGroup { set; get; } = "NO TOUCHY >:(";
-
-    public float Volume { get; set; } = 0.0f;
-	public double VolumeLimit { get; set; } = 0.0f;
-    public float VolumeSensitivity { set; get; } = 0.0f;
-	public double SenseVolumeLimit { set; get; } = 0.0;
 	public int AnimationTick { get; set; } = 0;
-	public int MicResetTime { get; set; } = 180;
 
 	public RandomNumberGenerator RandomNum { get; } = new RandomNumberGenerator();
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		MicrophoneListener = new MicrophoneListener();
 		Global = this;
-		Spectrum = AudioServer.GetBusEffectInstance(1 , 1) as AudioEffectSpectrumAnalyzerInstance;
+		MicrophoneListener.CreateMicrophone();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 		AnimationTick += 1;
-		Volume = Spectrum.GetMagnitudeForFrequencyRange(20.0f , 20000.0f).Length();
-		if (CurrentMicrophone != null) {
-			VolumeSensitivity = (float)Mathf.Lerp((double)VolumeSensitivity , 0.0 , delta*2);
+		MicrophoneListener.Volume = MicrophoneListener.SpectrumAnalyzerInstance.GetMagnitudeForFrequencyRange(20.0f , 20000.0f).Length();
+		if (MicrophoneListener.CurrentMicrophone != null) {
+            MicrophoneListener.VolumeSensitivity = (float)Mathf.Lerp((double) MicrophoneListener.VolumeSensitivity , 0.0 , delta*2);
 		}
-		if (Volume > VolumeLimit) {
-			VolumeSensitivity = 1.0f;
+		if ( MicrophoneListener.Volume > MicrophoneListener.VolumeLimit ) {
+            MicrophoneListener.VolumeSensitivity = 1.0f;
 		}
-		bool previousState = IsSpeaking;
-		IsSpeaking = VolumeSensitivity > SenseVolumeLimit;
+		bool previousState = MicrophoneListener.IsSpeaking;
+        MicrophoneListener.IsSpeaking = MicrophoneListener.VolumeSensitivity > MicrophoneListener.SensitivityLimit;
 
-		if (previousState!=IsSpeaking) {
-			if (IsSpeaking) {
+		if (previousState != MicrophoneListener.IsSpeaking ) {
+			if ( MicrophoneListener.IsSpeaking ) {
 				EmitSignal(SignalName.StartSpeaking);
 			}
 			else {
@@ -74,8 +67,6 @@ public partial class GlobalClass : Node
 			}
 		}
 	}
-
-
 
 	public async void ErrorHandler(Error error)
 	{
@@ -114,33 +105,6 @@ public partial class GlobalClass : Node
 		await ToSignal(GetTree().CreateTimer(3) , SceneTreeTimer.SignalName.Timeout);
 		Failed.Visible = false;
 	}
-
-	public async void CreateMicrophone()
-	{
-		AudioStreamPlayer player = new AudioStreamPlayer();
-		AudioStreamMicrophone microphone = new AudioStreamMicrophone();
-		player.Stream = microphone;
-		player.Autoplay = true;
-		player.Bus = "Record";
-		AddChild(player);
-		CurrentMicrophone = player;
-		await ToSignal(GetTree().CreateTimer(MicResetTime) , SceneTreeTimer.SignalName.Timeout);
-		if (CurrentMicrophone != player) {
-			return;
-		}
-		DeleteAllMicrophones();
-		CurrentMicrophone.Dispose();
-		CurrentMicrophone = null;
-        await ToSignal(GetTree().CreateTimer(0.25) , SceneTreeTimer.SignalName.Timeout);
-		CreateMicrophone();
-    }
-
-    public void DeleteAllMicrophones()
-    {
-		foreach( Node child in GetChildren() ) {
-			child.Dispose();
-		}
-    }
 
 	public void Select(Array<Area2D> areas)
 	{
