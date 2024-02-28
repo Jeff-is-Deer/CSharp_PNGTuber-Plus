@@ -15,6 +15,8 @@ public partial class Main : Node2D
     public FileDialog ReplaceDialog { get; set; } = null;
     public FileDialog SaveDialog { get; set; } = null;
     public FileDialog LoadDialog { get; set; } = null;
+    public HSlider MicrophoneVolumeSlider { get; set; } = null;
+    public HSlider MicrophoneSensitivitySlider { get; set; } = null;
     public float BounceChange { get; set; } = 0.0f;
     public bool EditMode { get; set; } = true;
     public bool IsFileSystemOpen { get; set; } = false;
@@ -26,21 +28,23 @@ public partial class Main : Node2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        Global.Main = this;
         Global.Failed = GetNode<Node2D>("Failed");
         Origin = GetNode<Node2D>("OriginMotion/Origin");
         EditControls = GetNode<Node2D>("EditControls");
         ControlPanel = GetNode<Node2D>("ControlPanel");
         HowTo = GetNode<Node2D>("HowTo");
-        SpriteList = GetNode<Node2D>("SpriteList");
+        SpriteList = GetNode<Node2D>("EditControls/SpriteList");
         Lines = GetNode<Node2D>("Lines");
 
         FileDialog = GetNode<FileDialog>("FileDialog");
         ReplaceDialog = GetNode<FileDialog>("ReplaceDialog");
         SaveDialog = GetNode<FileDialog>("SaveDialog");
         LoadDialog = GetNode<FileDialog>("LoadDialog");
+
+        MicrophoneVolumeSlider = GetNode<HSlider>("ControlPanel/MicrophoneVolumeSlider");
+        MicrophoneSensitivitySlider = GetNode<HSlider>("ControlPanel/MicrophoneSensitivitySlider");
+
         Global.Main = this;
-        Global.Failed = GetNode<Node2D>("Failed");
         Global.StartSpeaking += OnSpeak;
 
     }
