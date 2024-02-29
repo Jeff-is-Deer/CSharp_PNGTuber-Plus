@@ -61,7 +61,7 @@ public partial class GlobalClass : Node
 		}
 		if (Main != null && SelectedAvatarPart != null) {
 			if ( Input.IsActionJustPressed("zDown")) {
-				SelectedAvatarPart.SpriteData.ZLayer -= 1;
+				SelectedAvatarPart.PartData.ZLayer -= 1;
 				SelectedAvatarPart.SetZLayer();
 				PushUpdate("Moved sprite layer.");
 			}

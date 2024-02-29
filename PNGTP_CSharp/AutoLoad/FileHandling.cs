@@ -7,7 +7,7 @@ using static GlobalClass;
 public partial class FileHandling : Node
 {
     [Signal]
-    public delegate void ImageLoadFailedEventHandler(string error);
+    public delegate void ImageLoadFailedEventHandler(long errorValue);
     [Signal]
     public delegate void LoadFailedEventHandler();
     [Signal]
@@ -150,43 +150,38 @@ public partial class FileHandling : Node
         foreach(byte partId in avatar.Parts.Keys) {
             json_AvatarPart toAdd = new json_AvatarPart() {
                 ID = partId ,
-                PID = avatar.Parts[partId].SpriteData.PID ,
-                Children = avatar.Parts[partId].SpriteData.Children,
-                FilePath = avatar.Parts[partId].SpriteData.FilePath,
-                Type = avatar.Parts[partId].SpriteData.Type,
-                Base64ImageData = avatar.Parts[partId].SpriteData.Base64ImageData,
-                ApdOffset = new float[2] { avatar.Parts[partId].SpriteData.Offset.X, avatar.Parts[partId].SpriteData.Offset.Y },
-                ApdPosition = new float[2] { avatar.Parts[partId].SpriteData.Offset.X, avatar.Parts[partId].SpriteData.Offset.Y },
-                AnimationSpeed = avatar.Parts[partId].SpriteData.AnimationSpeed,
-                IsClipped = avatar.Parts[partId].SpriteData.IsClipped,
-                IgnoresBounce = avatar.Parts[partId].SpriteData.IgnoresBounce,
-                VisibleOnCostumeLayer = avatar.Parts[partId].SpriteData.VisibleOnCostumeLayer,
-                NumberOfFrames = avatar.Parts[partId].SpriteData.NumberOfFrames,
-                RotationalLimitMaximum = avatar.Parts[partId].SpriteData.RotationalLimitMaximum,
-                RotationalLimitMinimum = avatar.Parts[partId].SpriteData.RotationalLimitMinimum,
-                DragSpeed = avatar.Parts[partId].SpriteData.DragSpeed,
-                RotationalDragStrength = avatar.Parts[partId].SpriteData.RotationalDragStrength,
-                StretchAmount = avatar.Parts[partId].SpriteData.StretchAmount,
-                XAmplitude = avatar.Parts[partId].SpriteData.XAmplitude,
-                YAmplitude = avatar.Parts[partId].SpriteData.YAmplitude,
-                XFrequency = avatar.Parts[partId].SpriteData.XFrequency,
-                YFrequency = avatar.Parts[partId].SpriteData.YFrequency,
-                ShowOnBlink = avatar.Parts[partId].SpriteData.ShowOnBlink,
-                ShowOnTalk = avatar.Parts[partId].SpriteData.ShowOnTalk,
-                ZLayer = (byte)avatar.Parts[partId].SpriteData.ZIndex,
+                PID = avatar.Parts[partId].PartData.PID ,
+                Children = avatar.Parts[partId].PartData.Children,
+                FilePath = avatar.Parts[partId].PartData.FilePath,
+                Type = avatar.Parts[partId].PartData.Type,
+                Base64ImageData = avatar.Parts[partId].PartData.Base64ImageData,
+                ApdOffset = new float[2] { avatar.Parts[partId].PartData.Offset.X, avatar.Parts[partId].PartData.Offset.Y },
+                ApdPosition = new float[2] { avatar.Parts[partId].PartData.Offset.X, avatar.Parts[partId].PartData.Offset.Y },
+                AnimationSpeed = avatar.Parts[partId].PartData.AnimationSpeed,
+                IsClipped = avatar.Parts[partId].PartData.IsClipped,
+                IgnoresBounce = avatar.Parts[partId].PartData.IgnoresBounce,
+                VisibleOnCostumeLayer = avatar.Parts[partId].PartData.VisibleOnCostumeLayer,
+                NumberOfFrames = avatar.Parts[partId].PartData.NumberOfFrames,
+                RotationalLimitMaximum = avatar.Parts[partId].PartData.RotationalLimitMaximum,
+                RotationalLimitMinimum = avatar.Parts[partId].PartData.RotationalLimitMinimum,
+                DragSpeed = avatar.Parts[partId].PartData.DragSpeed,
+                RotationalDragStrength = avatar.Parts[partId].PartData.RotationalDragStrength,
+                StretchAmount = avatar.Parts[partId].PartData.StretchAmount,
+                XAmplitude = avatar.Parts[partId].PartData.XAmplitude,
+                YAmplitude = avatar.Parts[partId].PartData.YAmplitude,
+                XFrequency = avatar.Parts[partId].PartData.XFrequency,
+                YFrequency = avatar.Parts[partId].PartData.YFrequency,
+                ShowOnBlink = avatar.Parts[partId].PartData.ShowOnBlink,
+                ShowOnTalk = avatar.Parts[partId].PartData.ShowOnTalk,
+                ZLayer = (byte)avatar.Parts[partId].PartData.ZIndex,
             };
             result.Add(partId , toAdd);
         }
         return result;
     }
-    private void event_ImageLoadFailed(string error)
+    private void event_ImageLoadFailed(long error)
     {
-        if ( Enum.TryParse(error , out Error result) ) {
-            Global.ErrorHandler(result);
-        }
-        else {
-            Global.ErrorHandler(Error.PrinterOnFire);
-        }
+        Global.ErrorHandler((Error)error);
     }
     private void event_AvatarSaveFailed()
     {

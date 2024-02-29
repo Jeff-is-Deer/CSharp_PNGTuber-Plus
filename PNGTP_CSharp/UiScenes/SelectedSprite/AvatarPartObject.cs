@@ -46,35 +46,30 @@ public partial class AvatarPartObject : Node2D
     // Called when the node enters the scene tree for the first time.
     public override async void _Ready()
 	{
-		SpriteData = GetNode<AvatarPartSprite>("WobbleOrigin/DragOrigin/AvatarPart");
+		PartData = GetNode<AvatarPartSprite>("WobbleOrigin/DragOrigin/AvatarPart");
 		OriginSprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/AvatarPart/Origin");
 		GrabArea = GetNode<Area2D>("WobbleOrigin/DragOrigin/Grab");
 		DragOrigin = GetNode<Node2D>("WobbleOrigin/DragOrigin");
 		Dragger = GetNode<Node2D>("WobbleOrigin/Dragger");
 		WobbleOrigin = GetNode<Node2D>("WobbleOrigin");
 
-        ImageData = Global.Main.UserAvatar.GetImageFromPath(SpriteData.FilePath);
+		try {
+            ImageData = Global.Main.UserAvatar.GetImageFromPath(PartData.FilePath);
+        }
+		catch {
+			ImageData = Global.Main.UserAvatar.GetImageFromBase64(PartData.Base64ImageData);
+		}
+		if (ImageData == null) {
+			QueueFree();
+			return;
+		}
+		ImageTextureFromData = ImageTexture.CreateFromImage(ImageData); 
+
+
+
 		if (image != null) {
 
 		}
-        Error imageLoadError = image.Load(SpriteData.FilePath);
-		if(imageLoadError != Error.Ok) {
-			if ( SpriteData.Base64ImageData == string.Empty) {
-				Global.ErrorHandler(imageLoadError);
-				this.QueueFree();
-				return;
-			}
-			else {
-				byte[] data = Marshalls.Base64ToRaw(SpriteData.Base64ImageData);
-				Error bufferLoadError = image.LoadPngFromBuffer(data);
-				if ( bufferLoadError != Error.Ok) {
-					Global.ErrorHandler(bufferLoadError);
-					this.QueueFree();
-					return;
-				}
-			}
-		}
-		ImageTexture texture = ImageTexture.CreateFromImage(image);
 		Texture = texture;
 		ImageData = image;
 		ImageSize = image.GetSize();
@@ -99,22 +94,22 @@ public partial class AvatarPartObject : Node2D
 		GrabArea.Position = ( Size * -0.5f ) + Offset;
 		ChangeFrames();
 		SetZLayer();
-		if(SpriteData.Frames > 1) {
+		if(PartData.Frames > 1) {
 			RemakePolygon();
 		}
 		if (!hasPolygons) {
 			RemakePolygon();
 		}
-		AddToGroup(SpriteData.ID.ToString());
+		AddToGroup(PartData.ID.ToString());
 		await ToSignal(GetTree().CreateTimer(0.1) , SceneTreeTimer.SignalName.Timeout);
-		if ( SpriteData.PID != 0 ) {
-			Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup(SpriteData.PID.ToString());
+		if ( PartData.PID != 0 ) {
+			Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup(PartData.PID.ToString());
 			GetParent().RemoveChild(this);
 			nodes[0].GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite").AddChild(this);
 			ParentSprite = nodes[0] as Sprite2D;
 			Owner = nodes[0].GetNode("WobbleOrigin/DragOrigin/Sprite");
 		}
-		SetClip(SpriteData.IsClipped);
+		SetClip(PartData.IsClipped);
 		if (Global.Filtering) {
 			Sprite.TextureFilter = TextureFilterEnum.Linear;
 		}
@@ -133,7 +128,7 @@ public partial class AvatarPartObject : Node2D
 			OriginSprite.Visible = false;
 		}
 		Vector2 draggerGlobalPos = Dragger.GlobalPosition;
-		if (SpriteData.IgnoresBounce) {
+		if (PartData.IgnoresBounce) {
 			draggerGlobalPos.Y -= Global.Main.BounceChange;
 		}
 		Drag(delta);
@@ -155,7 +150,7 @@ public partial class AvatarPartObject : Node2D
             Global.ErrorHandler(imageLoadError);
             return;
         }
-        SpriteData.FilePath = newPath;
+        PartData.FilePath = newPath;
         ImageTexture texture = ImageTexture.CreateFromImage(image);
         Texture = texture;
         ImageData = image;
@@ -186,24 +181,24 @@ public partial class AvatarPartObject : Node2D
 
     public void Animation()
 	{
-		float speed = Mathf.Max(SpriteData.AnimationSpeed , Engine.MaxFps * 6.0f); 
-		if( SpriteData.AnimationSpeed > 0 && SpriteData.Frames > 1 && Global.AnimationTick % (int)(speed / (float) SpriteData.AnimationSpeed ) == 0) {
-			Sprite.Frame = Sprite.Frame == SpriteData.Frames - 1 ? 0 : Sprite.Frame + 1;
+		float speed = Mathf.Max(PartData.AnimationSpeed , Engine.MaxFps * 6.0f); 
+		if( PartData.AnimationSpeed > 0 && PartData.Frames > 1 && Global.AnimationTick % (int)(speed / (float) PartData.AnimationSpeed ) == 0) {
+			Sprite.Frame = Sprite.Frame == PartData.Frames - 1 ? 0 : Sprite.Frame + 1;
 		}
-		if ( SpriteData.Frames > 1) {
+		if ( PartData.Frames > 1) {
 			RemakePolygon();
 		}
 	}
 	public void SetZLayer()
 	{
-		Sprite.ZIndex = SpriteData.ZLayer;
+		Sprite.ZIndex = PartData.ZLayer;
 	}
 	public void TalkBlink()
 	{
 		int editValue = Global.Main.EditMode ? 1 : 0;
 		int speakValue = Global.IsSpeaking ? 10 : 0;
 		int blinkValue = Global.IsBlinking ? 20 : 0;
-		int value = ( SpriteData.ShowOnTalk + ( SpriteData.ShowOnBlink * 3 ) ) + blinkValue + speakValue;
+		int value = ( PartData.ShowOnTalk + ( PartData.ShowOnBlink * 3 ) ) + blinkValue + speakValue;
 		double faded = 0.2 * editValue;
 		int containsInArr = new Godot.Collections.Array(){ 0 , 10 , 20 , 30 , 1 , 21 , 12 , 32 , 3 , 13 , 4 , 15 , 26 , 36 , 27 , 38 }.Contains(value) ? 1 : 0;
 		Color newColor = new Color(Sprite.SelfModulate , (float)Mathf.Max(containsInArr , faded));
@@ -251,27 +246,27 @@ public partial class AvatarPartObject : Node2D
 	}
 	public void Drag(double delta)
 	{
-		if( SpriteData.DragSpeed == 0) {
+		if( PartData.DragSpeed == 0) {
 			Dragger.GlobalPosition = WobbleOrigin.GlobalPosition;
 		}
 		else {
-			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , (float)(( delta * 20 ) / SpriteData.DragSpeed ));
+			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , (float)(( delta * 20 ) / PartData.DragSpeed ));
 			DragOrigin.GlobalPosition = Dragger.GlobalPosition;
 		}
 	}
 	public void Wobble()
 	{
-		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * SpriteData.XFrequency) * SpriteData.XAmplification , MathF.Sin(Tick * SpriteData.YFrequency) * SpriteData.YAmplification);
+		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * PartData.XFrequency) * PartData.XAmplification , MathF.Sin(Tick * PartData.YFrequency) * PartData.YAmplification);
 		WobbleOrigin.Position = wavePosition;
 	}
 	public void RotationalDrag(float length,double delta)
 	{
-		float yVelocity = Mathf.Clamp(length * SpriteData.RotationalDragStrength , SpriteData.RotationalLimitMinimum , SpriteData.RotationalLimitMaximum);
+		float yVelocity = Mathf.Clamp(length * PartData.RotationalDragStrength , PartData.RotationalLimitMinimum , PartData.RotationalLimitMaximum);
 		Sprite.Rotation = (float) Mathf.LerpAngle((double)Sprite.Rotation , (double)Mathf.DegToRad(yVelocity) , 0.25);
 	}
 	public void Stretch(float length,double delta)
 	{
-		float yVelocity = ( length * SpriteData.StretchAmount * 0.1f );
+		float yVelocity = ( length * PartData.StretchAmount * 0.1f );
 		Vector2 target = new Vector2(1.0f -  yVelocity , 1.0f + yVelocity );
 		Sprite.Scale = Sprite.Scale.Lerp(target , 0.5f);
 	}
@@ -281,7 +276,7 @@ public partial class AvatarPartObject : Node2D
 	}
 	public void ChangeFrames()
 	{
-		Sprite.Hframes = SpriteData.Frames;
+		Sprite.Hframes = PartData.Frames;
 		Sprite.Frame = 0;
 	}
 	public void RemakePolygon()
@@ -314,21 +309,21 @@ public partial class AvatarPartObject : Node2D
 		if(toggle) {
 			Sprite.ClipChildren = ClipChildrenMode.AndDraw;
 			foreach (AvatarPartObject node in GetAllLinkedSprites()) {
-				node.ZIndex = SpriteData.ZLayer;
+				node.ZIndex = PartData.ZLayer;
 				node.SetZLayer();
 			}
 		}
 		else {
 			Sprite.ClipChildren = ClipChildrenMode.Disabled;
 		}
-        SpriteData.IsClipped = toggle;
+        PartData.IsClipped = toggle;
 	}
 	public Godot.Collections.Array<AvatarPartObject> GetAllLinkedSprites()
 	{
 		Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup("Saved");
 		Godot.Collections.Array<AvatarPartObject> linkedSprites = new Godot.Collections.Array<AvatarPartObject>();
 		foreach(AvatarPartObject node in nodes) {
-			if (node.SpriteData.PID == SpriteData.ID ) {
+			if (node.PartData.PID == PartData.ID ) {
 				linkedSprites.Add(node);
 			}
 		}

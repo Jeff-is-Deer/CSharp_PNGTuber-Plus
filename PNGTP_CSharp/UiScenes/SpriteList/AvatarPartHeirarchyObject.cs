@@ -29,7 +29,7 @@ public partial class AvatarPartHeirarchyObject : NinePatchRect
 
     public void _Process()
     {
-        SelectedOutline.Visible = AvatarPart == Global.SelectedAvatarPart.SpriteData;
+        SelectedOutline.Visible = AvatarPart == Global.SelectedAvatarPart.PartData;
     }
     public void UpdateVisibility()
     {

@@ -23,19 +23,18 @@ public partial class Avatar : Node2D
         return bounceValue * -1;
     }
 
-#nullable enable
-    public Image? GetImageFromPath(string filePath)
+    public Image GetImageFromPath(string filePath)
     {
         Image result = new Image();
         Error error = result.Load(filePath);
         if (error != Error.Ok) {
-            string errorName = Enum.GetName(typeof(Error) , error);
-            EmitSignal(FileHandling.SignalName.ImageLoadFailed , errorName);
+            long errorValue = (long)error;
+            EmitSignal(FileHandling.SignalName.ImageLoadFailed , errorValue);
             return null;
         }
         return result;
     }
-    public Image? GetImageFromBuffer(string base64)
+    public Image GetImageFromBase64(string base64)
     {
         Image result = new Image();
         byte[] convertedData = Marshalls.Base64ToRaw(base64);
@@ -47,6 +46,5 @@ public partial class Avatar : Node2D
         }
         return result;
     }
-#nullable disable
 
 }

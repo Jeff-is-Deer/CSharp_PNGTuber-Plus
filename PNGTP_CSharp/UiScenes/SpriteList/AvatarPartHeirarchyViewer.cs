@@ -25,7 +25,7 @@ public partial class AvatarPartHeirarchyViewer : Node2D
         Array<AvatarPartObject> parsedSprites = new Array<AvatarPartObject>();
         foreach(AvatarPartObject sprite in allSprites) {
             SpriteListObject spriteListObject = SpriteListObject.Instantiate<SpriteListObject>();
-            spriteListObject.SpritePath = sprite.SpriteData.Path;
+            spriteListObject.SpritePath = sprite.PartData.Path;
             spriteListObject.Sprite = Sprite;
             spriteListObject.Sprite.ParentIdentification = Sprite.ParentIdentification;
             if(Sprite.Identification != 0) {

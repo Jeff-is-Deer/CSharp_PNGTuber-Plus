@@ -85,7 +85,7 @@ public partial class Main : Node2D
     public void AddImage(string path)
     {
         AvatarPartObject sprite = SpriteObject.Instantiate<AvatarPartObject>();
-        SpriteData newSprite = new SpriteData();
+        PartData newSprite = new PartData();
         //newSprite.Path = path;
         //newSprite.Identification = 
     }
