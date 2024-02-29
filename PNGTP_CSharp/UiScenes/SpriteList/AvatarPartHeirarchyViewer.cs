@@ -1,13 +1,14 @@
 ﻿using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using static GlobalClass;
 
-public partial class SpriteListViewer : Node2D
+public partial class AvatarPartHeirarchyViewer : Node2D
 {
     public PackedScene SpriteListObject { get; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SpriteList/SpriteListObject.tscn");
     public VBoxContainer Container { get; set; } = null;
-    public AvatarPiece Sprite { get; set; } = null;
+    public AvatarPart Sprite { get; set; } = null;
 
     public override void _Ready()
     {
@@ -19,9 +20,9 @@ public partial class SpriteListViewer : Node2D
     {
         ClearContainer();
         await ToSignal(GetTree().CreateTimer(0.15),SceneTreeTimer.SignalName.Timeout);
-        Array<Node> allSprites = GetTree().GetNodesInGroup("saved"); // This is all AvatarPartObjects currently loaded in the program
-        List<SpriteListObject> childSprites = new List<SpriteListObject >();
-        Array<SpriteListObject> parsedSprites = new Array<SpriteListObject>();
+        List<AvatarPartObject> allSprites = GetTree().GetNodesInGroup("ActiveAvatarParts").OfType<AvatarPartObject>().ToList(); // This is all AvatarPartObjects currently loaded in the program
+        List<Node2D> childSprites = new List<Node2D>();
+        Array<AvatarPartObject> parsedSprites = new Array<AvatarPartObject>();
         foreach(AvatarPartObject sprite in allSprites) {
             SpriteListObject spriteListObject = SpriteListObject.Instantiate<SpriteListObject>();
             spriteListObject.SpritePath = sprite.SpriteData.Path;

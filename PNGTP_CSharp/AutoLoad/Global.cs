@@ -10,15 +10,15 @@ public partial class GlobalClass : Node
 	public delegate void StopSpeakingEventHandler();
 
 	public static GlobalClass Global { get; set; } = null;
+	public AvatarPartHeirarchyViewer AvatarPartHeirarchy { set; get; } = null;
+	public AvatarPartObject SelectedAvatarPart { get; set; } = null;
+	public AvatarPartDetails AvatarPartDetailEdit { set; get; } = null;
 	public MicrophoneListener MicrophoneListener { get; set; }
     public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
-	public SpriteListViewer SpriteList { set; get; } = null;
-	public AvatarPartObject SelectedAvatarPart { get; set; } = null;
 	public Node2D Failed { get; set; } = null;
 	public Chain Chain { set; get; } = null;
 	public PushUpdates UpdatePusherNode { set; get; } = null;
-	public SpriteViewer SpriteEdit { set; get; } = null;
 	public Color BackgroundColor { get; set; } = new Color(0.0f , 0.0f , 0.0f , 0.0f);
     public bool Filtering { get; set; } = false;
 	public bool ReparentingMode { get; set; } = false;
@@ -33,9 +33,8 @@ public partial class GlobalClass : Node
 	public override void _Ready()
 	{
 		MicrophoneListener = new MicrophoneListener();
-		Global = this;
 		MicrophoneListener.CreateMicrophone();
-		
+		Global = this;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -5,7 +5,7 @@ using static GlobalClass;
 
 public partial class Avatar : Node2D
 {
-    public Dictionary<byte , AvatarPart> Parts { get; set; }
+    public Dictionary<byte , AvatarPartObject> Parts { get; set; }
     public bool IsBlinking { get; set; }
     public bool BounceOnCostumeChange { get; set; }
     public int BounceStrength { get; set; }
@@ -18,7 +18,7 @@ public partial class Avatar : Node2D
         
     }
 
-    public int Bounce(int bounceValue) 
+    public static int Bounce(int bounceValue) 
     {
         return bounceValue * -1;
     }

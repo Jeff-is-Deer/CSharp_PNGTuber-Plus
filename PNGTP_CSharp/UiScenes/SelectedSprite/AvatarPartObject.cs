@@ -4,7 +4,7 @@ using Godot;
 using static GlobalClass;
 using System;
 
-public partial class AvatarSprite : AvatarPart
+public partial class AvatarPartObject : Node2D
 {
 	public const byte SPRITE = 1;
 	public const byte ANIMATION = 2;
@@ -18,13 +18,12 @@ public partial class AvatarSprite : AvatarPart
 	public Node2D WobbleOrigin { get; set; } = null;
 
 	// Sprite data
-	public SpriteData SpriteData { get; set; } = null;
+	public AvatarPartSprite PartData { get; set; } = null;
 
 	// Passed Variables
 	public Image ImageData { get; set; } = null;
 	public ImageTexture ImageTextureFromData { get; set; } = null;
 
-	public Sprite2D ParentSprite { get; set; } = null;
 	public Vector2 ImageSize { get; set; } = Vector2.Zero;
 
 	// Visuals
@@ -47,16 +46,18 @@ public partial class AvatarSprite : AvatarPart
     // Called when the node enters the scene tree for the first time.
     public override async void _Ready()
 	{
-		Sprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite");
-		OriginSprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/Sprite/Origin");
+		SpriteData = GetNode<AvatarPartSprite>("WobbleOrigin/DragOrigin/AvatarPart");
+		OriginSprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/AvatarPart/Origin");
 		GrabArea = GetNode<Area2D>("WobbleOrigin/DragOrigin/Grab");
 		DragOrigin = GetNode<Node2D>("WobbleOrigin/DragOrigin");
 		Dragger = GetNode<Node2D>("WobbleOrigin/Dragger");
 		WobbleOrigin = GetNode<Node2D>("WobbleOrigin");
-		Offset = new Vector2(1.0f , 1.0f);
 
-		Image image = new Image();
-		Error imageLoadError = image.Load(SpriteData.FilePath);
+        ImageData = Global.Main.UserAvatar.GetImageFromPath(SpriteData.FilePath);
+		if (image != null) {
+
+		}
+        Error imageLoadError = image.Load(SpriteData.FilePath);
 		if(imageLoadError != Error.Ok) {
 			if ( SpriteData.Base64ImageData == string.Empty) {
 				Global.ErrorHandler(imageLoadError);
@@ -312,7 +313,7 @@ public partial class AvatarSprite : AvatarPart
 	{
 		if(toggle) {
 			Sprite.ClipChildren = ClipChildrenMode.AndDraw;
-			foreach (SpriteObject node in GetAllLinkedSprites()) {
+			foreach (AvatarPartObject node in GetAllLinkedSprites()) {
 				node.ZIndex = SpriteData.ZLayer;
 				node.SetZLayer();
 			}
@@ -322,11 +323,11 @@ public partial class AvatarSprite : AvatarPart
 		}
         SpriteData.IsClipped = toggle;
 	}
-	public Godot.Collections.Array<SpriteObject> GetAllLinkedSprites()
+	public Godot.Collections.Array<AvatarPartObject> GetAllLinkedSprites()
 	{
 		Godot.Collections.Array<Node> nodes = GetTree().GetNodesInGroup("Saved");
-		Godot.Collections.Array<SpriteObject> linkedSprites = new Godot.Collections.Array<SpriteObject>();
-		foreach(SpriteObject node in nodes) {
+		Godot.Collections.Array<AvatarPartObject> linkedSprites = new Godot.Collections.Array<AvatarPartObject>();
+		foreach(AvatarPartObject node in nodes) {
 			if (node.SpriteData.PID == SpriteData.ID ) {
 				linkedSprites.Add(node);
 			}
