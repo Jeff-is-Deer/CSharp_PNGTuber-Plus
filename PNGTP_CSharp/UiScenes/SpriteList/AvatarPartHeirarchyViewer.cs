@@ -8,7 +8,7 @@ public partial class AvatarPartHeirarchyViewer : Node2D
 {
     public PackedScene SpriteListObject { get; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SpriteList/SpriteListObject.tscn");
     public VBoxContainer Container { get; set; } = null;
-    public AvatarPart Sprite { get; set; } = null;
+    public AvatarPartSprite Sprite { get; set; } = null;
 
     public override void _Ready()
     {

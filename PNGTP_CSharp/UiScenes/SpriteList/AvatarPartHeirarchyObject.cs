@@ -10,7 +10,7 @@ public partial class AvatarPartHeirarchyObject : NinePatchRect
     public Label AvatarPartNameLabel { get; set; } = null;
     public Line2D HeirarchyLine { get; set; } = null;
     public Button PreviewButton { get; set; } = null;
-    public AvatarPart AvatarPart { get; set; } = null;
+    public AvatarPartSprite AvatarPart { get; set; } = null;
     public string AvatarPartPath { get; set; } = string.Empty;
     public int IndentLayer { get; set; } = 0;
 
@@ -39,9 +39,10 @@ public partial class AvatarPartHeirarchyObject : NinePatchRect
     {
     }
 
+
     public void Event_ButtonPressed()
     {
-        if(Global.SelectedSprite != null && Global.ReparentingMode) {
+        if(Global.SelectedAvatarPart != null && Global.ReparentingMode) {
             //Global.LinkSprite(Global.SelectedSprite , Sprite);
             Global.Chain.Enable(true);
         }
