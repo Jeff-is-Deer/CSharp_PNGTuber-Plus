@@ -5,6 +5,7 @@ using static GlobalClass;
 public partial class Main : Node2D
 {
     public PackedScene SpriteObject { get; set; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SelectedSprite/SpriteObject.tscn");
+    public Avatar UserAvatar { get; set; }
     public Node2D Origin { get; set; } = null;
     public Node2D EditControls { get; set; } = null;
     public Node2D ControlPanel { get; set; } = null;
@@ -41,8 +42,11 @@ public partial class Main : Node2D
         SaveDialog = GetNode<FileDialog>("SaveDialog");
         LoadDialog = GetNode<FileDialog>("LoadDialog");
 
+        UserAvatar = GetNode<Avatar>("OriginMotion/Origin/Avatar");
+
         MicrophoneVolumeSlider = GetNode<HSlider>("ControlPanel/MicrophoneVolumeSlider");
         MicrophoneSensitivitySlider = GetNode<HSlider>("ControlPanel/MicrophoneSensitivitySlider");
+
 
         Global.Main = this;
         Global.StartSpeaking += OnSpeak;
@@ -57,7 +61,7 @@ public partial class Main : Node2D
 
     public void OnSpeak()
     {
-        if ( Origin.GetParent<Sprite2D>().Position.Y > -16 ) {
+        if ( Origin.GetParent<Node2D>().Position.Y > -16 ) {
             YVelocity = BounceSlider * -1;
         }
     }
@@ -80,7 +84,7 @@ public partial class Main : Node2D
     }
     public void AddImage(string path)
     {
-        SpriteObject sprite = SpriteObject.Instantiate<SpriteObject>();
+        AvatarPartObject sprite = SpriteObject.Instantiate<AvatarPartObject>();
         SpriteData newSprite = new SpriteData();
         //newSprite.Path = path;
         //newSprite.Identification = 

@@ -10,12 +10,11 @@ public partial class GlobalClass : Node
 	public delegate void StopSpeakingEventHandler();
 
 	public static GlobalClass Global { get; set; } = null;
-	public Avatar UserAvatar { get; set; }
 	public MicrophoneListener MicrophoneListener { get; set; }
     public Main Main { get; set; } = null;
 	public UserMouseCursor Mouse { set; get; } = null;
 	public SpriteListViewer SpriteList { set; get; } = null;
-	public AvatarSprite SelectedSprite { get; set; } = null;
+	public AvatarPartObject SelectedAvatarPart { get; set; } = null;
 	public Node2D Failed { get; set; } = null;
 	public Chain Chain { set; get; } = null;
 	public PushUpdates UpdatePusherNode { set; get; } = null;
@@ -26,6 +25,7 @@ public partial class GlobalClass : Node
 
 	public string PrimaryNodeGroup { set; get; } = "NO TOUCHY >:(";
 	public int AnimationTick { get; set; } = 0;
+	public string CurrentAvatarFile { get; set; } = string.Empty;
 
 	public RandomNumberGenerator RandomNum { get; } = new RandomNumberGenerator();
 
@@ -35,6 +35,7 @@ public partial class GlobalClass : Node
 		MicrophoneListener = new MicrophoneListener();
 		Global = this;
 		MicrophoneListener.CreateMicrophone();
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -59,10 +60,10 @@ public partial class GlobalClass : Node
 				EmitSignal(SignalName.StopSpeaking);
 			}
 		}
-		if (Main != null && SelectedSprite != null) {
+		if (Main != null && SelectedAvatarPart != null) {
 			if ( Input.IsActionJustPressed("zDown")) {
-				SelectedSprite.SpriteData.ZLayer -= 1;
-				SelectedSprite.SetZLayer();
+				SelectedAvatarPart.SpriteData.ZLayer -= 1;
+				SelectedAvatarPart.SetZLayer();
 				PushUpdate("Moved sprite layer.");
 			}
 		}
