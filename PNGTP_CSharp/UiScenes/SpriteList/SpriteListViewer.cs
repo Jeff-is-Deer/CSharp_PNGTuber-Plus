@@ -19,10 +19,10 @@ public partial class SpriteListViewer : Node2D
     {
         ClearContainer();
         await ToSignal(GetTree().CreateTimer(0.15),SceneTreeTimer.SignalName.Timeout);
-        Array<Node> allSprites = GetTree().GetNodesInGroup("saved");
+        Array<Node> allSprites = GetTree().GetNodesInGroup("saved"); // This is all AvatarPartObjects currently loaded in the program
         List<SpriteListObject> childSprites = new List<SpriteListObject >();
         Array<SpriteListObject> parsedSprites = new Array<SpriteListObject>();
-        foreach(SpriteObject sprite in allSprites) {
+        foreach(AvatarPartObject sprite in allSprites) {
             SpriteListObject spriteListObject = SpriteListObject.Instantiate<SpriteListObject>();
             spriteListObject.SpritePath = sprite.SpriteData.Path;
             spriteListObject.Sprite = Sprite;
