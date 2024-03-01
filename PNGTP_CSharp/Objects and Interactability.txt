@@ -2,20 +2,20 @@ OBJECTS:
 - Avatar
     - Contains all AvatarPart instances.  Will contain methods that can add, remove, and adjust individual properties of the AvatarPiece that is selected in the editor.
     - Properties:
-        - List<AvatarPart> Parts
-            - Includes all AvatarPart instances that make up the PNG avatar.  Will be loaded and sorted by layer.
-        - AvatarPart SelectedPart
-            - Represents the currently selected part within the edit window.
+        - Dictionary<byte,AvatarPart> Parts
+            - Includes all AvatarPart instances that make up the PNG avatar.  Keys will be part's ID.
     
     - Methods:
         - Error LoadImage(string filePath)
             - Loads an image from an operating system filepath
         - Error LoadImage(byte[] avatarPartData)
             - Loads an image from byte array
-        - Base64ImageDataToRaw(string base64)
+        - byte[] Base64ImageDataToRaw(string base64)
             - Deserializes Base64 string of an ImageData class to a raw byte array
-        - 
-
+        - void AddChild(AvatarPart parent, AvatarPart child)
+            - Assigns a child part to a parent
+        - void RemoveChild(AvatarPart parent, AvatarPart child)
+            -
 
 - AvatarPart
     - Can be serialized for saving and deserialized for loading within Newtonsoft.Json.
@@ -28,6 +28,8 @@ OBJECTS:
             - The image's "parent" unique identifier.  This will match the connected image's ID
         - byte Type 
             - The image's type.  It can be a sprite or an animation
+        -byte[] Children
+            - The image's children images.  
         - string Base64ImageData
             - The image data represented by a Base64 string.  This will be interpreted by `byte[] Marshalls.Base64ToRaw(string Base64ImageData)` and `Error Image.LoadPngFromBuffer(byte[] Raw)`
         - float[2] ApdOffset
@@ -75,3 +77,14 @@ OBJECTS:
         - byte ZLayer:
             - The layer of the sprite.  Can have up to 256 different layers
 
+- Settings
+    - int[2] WindowSize
+        - Will be parsed as Vector2I struct
+    - float[4] BackgroundColor
+        - Will be parsed as Color struct
+    - string DefaultAvatarFile
+        - Absolute path of default avatar settings file
+    - int MaxFps
+        - Maximum FPS within the window
+    - float Volume
+    - float ActivationSensitivity
