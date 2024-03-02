@@ -156,8 +156,13 @@ public partial class AvatarPartDetails : Node2D
         AvatarPartObject part = Global.SelectedAvatarPart;
         ChildPartSpin.RotateY((float)delta * 4.0f);
         ParentPartSpin.RotateY((float)delta * 4.0f);
-
-        
+        PositionLabel.Text = $"Position X: {part.PartData.Position.X}    Y: {part.PartData.Position.Y}";
+        OffsetLabel.Text =   $"Offset   X: {part.PartData.Offset.X}    Y: {part.PartData.Offset.Y}";
+        LayerLabel.Text =    $"Layer       {part.PartData.ZIndex}";
+        int rotLimitMin = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
+        int rotationSize = Global.SelectedAvatarPart.PartData.RotationalLimitMaximum - rotLimitMin;
+        SpriteRotationalDisplay.RotationDegrees = Mathf.Sin(Global.AnimationTick * 0.05f) * ( rotationSize / 2 ) + ( rotLimitMin + ( rotationSize / 2 ) );
+        RotationalLine_3.RotationDegrees = SpriteRotationalDisplay.RotationDegrees;
     }
 
     public void SetImage()
