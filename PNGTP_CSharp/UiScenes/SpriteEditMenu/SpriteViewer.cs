@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
+using Godot.Collections;
 using static GlobalClass;
 
 
@@ -37,7 +40,7 @@ public partial class AvatarPartDetails : Node2D
     public HSlider YWobbleAmplitudeSlider { get; set; } = null;
 
     public Label RotationalDragLabel { get; set; } = null;
-    public HSlider RotatiaonalDragSlider { get; set; } = null;
+    public HSlider RotationalDragSlider { get; set; } = null;
 
     public Label RotationalLimitMaximumLabel { get; set; } = null;
     public HSlider RotationalLimitMaximumSlider { get; set; } = null;
@@ -59,14 +62,22 @@ public partial class AvatarPartDetails : Node2D
     public Button IgnoreBounceCheckBox { get; set; } = null;
     public Button ClipLinkedCheckBox { get; set; } = null;
 
-    public Sprite2D SpeakingSprite { get; set; } = null;
+    public Sprite2D SpeakingButtonSprite { get; set; } = null;
     public Button SpeakingButton { get; set; } = null;
 
-    public Sprite2D BlinkingSprite { get; set; } = null;
+    public Sprite2D BlinkingButtonSprite { get; set; } = null;
     public Button BlinkingButton { get; set; } = null;
 
     public Sprite2D UnlinkSprite { get; set; } = null;
     public Button UnlinkButton { get; set; } = null;
+
+    public Label PositionLabel { get; set; } = null;
+    public Label OffsetLabel { get; set; } = null;
+    public Label LayerLabel { get; set; } = null;
+
+    public Sprite2D RotationalLine_3 { get; set; } = null;
+    public Sprite2D RotationalLine_2 { get; set; } = null;
+    public Sprite2D RotationalLine_1 { get; set; } = null;
 
     public override void _Ready()
     {
@@ -88,12 +99,12 @@ public partial class AvatarPartDetails : Node2D
         YWobbleAmplitudeSlider = GetNode<HSlider>("WobbleControl/YWobbleAmplitudeSlider");
 
         RotationalDragLabel = GetNode<Label>("Rotation/RotationalDragLabel");
-        RotatiaonalDragSlider = GetNode<HSlider>("Rotation/RotationalDragSlider");
+        RotationalDragSlider = GetNode<HSlider>("Rotation/RotationalDragSlider");
 
-        SpeakingSprite = GetNode<Sprite2D>("Buttons/SpeakingSprite");
+        SpeakingButtonSprite = GetNode<Sprite2D>("Buttons/SpeakingSprite");
         SpeakingButton = GetNode<Button>("Buttons/SpeakingSprite/SpeakingButton");
 
-        BlinkingSprite = GetNode<Sprite2D>("Buttons/BlinkingSprite");
+        BlinkingButtonSprite = GetNode<Sprite2D>("Buttons/BlinkingSprite");
         BlinkingButton = GetNode<Button>("Buttons/BlinkingSprite/BlinkingButton");
 
         RotationalLimitMaximumLabel = GetNode<Label>("RotationalLimits/MaximumLabel");
@@ -115,19 +126,43 @@ public partial class AvatarPartDetails : Node2D
         UnlinkSprite = GetNode<Sprite2D>("Buttons/UnlinkSprite");
         UnlinkButton = GetNode<Button>("Buttons/UnlinkSprite/UnlinkButton");
 
-        ChangeRotationalLimit();
-        SetLayerButtons();
+        PositionLabel = GetNode<Label>("PositionLabels/Position");
+        OffsetLabel = GetNode<Label>("PositionLabels/Offset");
+        LayerLabel = GetNode<Label>("PositionLabels/Layer");
 
-        if (Global.SelectedAvatarPart.PartData.PID == 0) {
+        RotationalLine_1 = GetNode<Sprite2D>("RotationalLimits/RotateBack/Line1");
+        RotationalLine_2 = GetNode<Sprite2D>("RotationalLimits/RotateBack/Line2");
+        RotationalLine_3 = GetNode<Sprite2D>("RotationalLimits/RotateBack/Line3");
+
+
+
+
+
+        if ( Global.SelectedAvatarPart.PartData.PID == 0 ) {
             UnlinkSprite.Visible = false;
         }
 
         Global.AvatarPartDetailEdit = this;
     }
 
+    public override void _Process(double delta)
+    {
+        Visible = Global.SelectedAvatarPart != null;
+        CoverCollider.Disabled = !Visible;
+
+        if(!Visible) {
+            return;
+        }
+        AvatarPartObject part = Global.SelectedAvatarPart;
+        ChildPartSpin.RotateY((float)delta * 4.0f);
+        ParentPartSpin.RotateY((float)delta * 4.0f);
+
+        
+    }
+
     public void SetImage()
     {
-        if(Global.SelectedAvatarPart == null) { return; }
+        if ( Global.SelectedAvatarPart == null ) { return; }
         float partHeight = Global.SelectedAvatarPart.ImageData.GetSize().Y;
         ChildPartSpin.Texture = Global.SelectedAvatarPart.PartData.Texture; // i think i may have overcomplicated the object structure.  may need complete rework.
         ChildPartSpin.PixelSize = 1.5f / partHeight;
@@ -139,9 +174,67 @@ public partial class AvatarPartDetails : Node2D
         DragSliderLabel.Text = $"Drag: {Global.SelectedAvatarPart.PartData.DragSpeed}";
         DragSlider.Value = Global.SelectedAvatarPart.PartData.DragSpeed;
 
+        XWobbleFrequencyLabel.Text = $"X frequency: {Global.SelectedAvatarPart.PartData.XFrequency}";
+        XWobbleAmplitudeLabel.Text = $"X amplitude: {Global.SelectedAvatarPart.PartData.XAmplitude}";
+        XWobbleFrequencySlider.Value = Global.SelectedAvatarPart.PartData.XFrequency;
+        XWobbleAmplitudeSlider.Value = Global.SelectedAvatarPart.PartData.XAmplitude;
+
+        YWobbleFrequencyLabel.Text = $"Y frequency: {Global.SelectedAvatarPart.PartData.YFrequency}";
+        YWobbleAmplitudeLabel.Text = $"Y amplitude: {Global.SelectedAvatarPart.PartData.YAmplitude}";
+        YWobbleFrequencySlider.Value = Global.SelectedAvatarPart.PartData.YFrequency;
+        YWobbleAmplitudeSlider.Value = Global.SelectedAvatarPart.PartData.YAmplitude;
+
+        RotationalDragLabel.Text = $"Rotational drag: {Global.SelectedAvatarPart.PartData.RotationalDragStrength}";
+        RotationalDragSlider.Value = Global.SelectedAvatarPart.PartData.RotationalDragStrength;
+
+        SpeakingButtonSprite.Frame = Global.SelectedAvatarPart.PartData.ShowOnTalk;
+        BlinkingButtonSprite.Frame = Global.SelectedAvatarPart.PartData.ShowOnBlink;
+
+        RotationalLimitMaximumLabel.Text = $"Rotational limit max: {Global.SelectedAvatarPart.PartData.RotationalLimitMaximum}";
+        RotationalLimitMaximumSlider.Value = Global.SelectedAvatarPart.PartData.RotationalLimitMaximum;
+        RotationalLimitMinimumLabel.Text = $"Rotational limit min: {Global.SelectedAvatarPart.PartData.RotationalLimitMinimum}";
+        RotationalLimitMinimumSlider.Value = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
+
+        SquishLabel.Text = $"Squish: {Global.SelectedAvatarPart.PartData.StretchAmount}";
+        SquishSlider.Value = Global.SelectedAvatarPart.PartData.StretchAmount;
+
+        FileTitleLabel.Text = Global.SelectedAvatarPart.PartData.FilePath;
+
+        ClipLinkedCheckBox.ButtonPressed = Global.SelectedAvatarPart.PartData.IsClipped;
+        IgnoreBounceCheckBox.ButtonPressed = Global.SelectedAvatarPart.PartData.IgnoresBounce;
+
+        AnimationSpeedLabel.Text = $"Animation speed: {Global.SelectedAvatarPart.PartData.AnimationSpeed}";
+        AnimationSpeedSlider.Value = Global.SelectedAvatarPart.PartData.AnimationSpeed;
+
+        AnimationFramesLabel.Text = $"Animation frames: {Global.SelectedAvatarPart.PartData.NumberOfFrames}";
+        AnimationFramesSlider.Value = Global.SelectedAvatarPart.PartData.NumberOfFrames;
+
+        ChangeRotationalLimit();
+        SetLayerButtons();
+        HasParent();
 
 
 
+    }
 
+    public void HasParent()
+    {
+        if ( Global.SelectedAvatarPart.PartData.PID == 0 ) {
+            UnlinkButton.Visible = false;
+            ParentPartSpin.Visible = false;
+        }
+        else {
+            UnlinkButton.Visible = true;
+            try {
+                AvatarPartObject parentPart = GetTree().GetNodesInGroup(Global.SelectedAvatarPart.PartData.PID.ToString()).OfType<AvatarPartObject>().ToList()[0];
+                ParentPartSpin.Texture = parentPart.PartData.Texture;
+                ParentPartSpin.PixelSize = 1.5f / parentPart.ImageData.GetSize().Y;
+                ParentPartSpin.Hframes = parentPart.PartData.NumberOfFrames;
+                ParentPartSpin.Visible = true;
+            }
+            catch {
+                return;
+            }
+        }
     }
 }
