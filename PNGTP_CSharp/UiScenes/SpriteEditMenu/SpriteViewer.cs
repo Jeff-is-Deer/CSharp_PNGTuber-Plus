@@ -39,6 +39,8 @@ public partial class AvatarPartDetails : Node2D
     public Label YWobbleAmplitudeLabel { get; set; } = null;
     public HSlider YWobbleAmplitudeSlider { get; set; } = null;
 
+    public TextureProgressBar RotationalLimitBar { get; set; } = null;
+
     public Label RotationalDragLabel { get; set; } = null;
     public HSlider RotationalDragSlider { get; set; } = null;
 
@@ -112,6 +114,8 @@ public partial class AvatarPartDetails : Node2D
 
         RotationalLimitMinimumLabel = GetNode<Label>("RotationalLimits/MinimumLabel");
         RotationalLimitMinimumSlider = GetNode<HSlider>("RotationalLimits/MinimumSlider");
+
+        RotationalLimitBar = GetNode<TextureProgressBar>("RotationalLimits/RotateBack/RotationalLimitBar");
 
         FileTitleLabel = GetNode<Label>("Position/FileTitleLabel");
 
@@ -220,6 +224,34 @@ public partial class AvatarPartDetails : Node2D
 
 
 
+    }
+    public void ChangeRotationalLimit()
+    {
+        RotationalLimitBar.Value = Global.SelectedAvatarPart.PartData.RotationalLimitMaximum - Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
+        RotationalLimitBar.RotationDegrees = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum + 90;
+        RotationalLine_1.RotationDegrees = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
+        RotationalLine_2.RotationDegrees = Global.SelectedAvatarPart.PartData.RotationalLimitMaximum;
+    }
+
+    public void SetLayerButtons()
+    {
+        byte[] visibleOnLayers = Global.SelectedAvatarPart.PartData.VisibleOnCostumeLayer;
+        GetNode<Sprite2D>("LayerButtons/Layer1").Frame = visibleOnLayers[0];
+        GetNode<Sprite2D>("LayerButtons/Layer2").Frame = visibleOnLayers[1];
+        GetNode<Sprite2D>("LayerButtons/Layer3").Frame = visibleOnLayers[2];
+        GetNode<Sprite2D>("LayerButtons/Layer4").Frame = visibleOnLayers[3];
+        GetNode<Sprite2D>("LayerButtons/Layer5").Frame = visibleOnLayers[4];
+        GetNode<Sprite2D>("LayerButtons/Layer6").Frame = visibleOnLayers[5];
+        GetNode<Sprite2D>("LayerButtons/Layer7").Frame = visibleOnLayers[6];
+        GetNode<Sprite2D>("LayerButtons/Layer8").Frame = visibleOnLayers[7];
+        GetNode<Sprite2D>("LayerButtons/Layer9").Frame = visibleOnLayers[8];
+        GetNode<Sprite2D>("LayerButtons/Layer10").Frame = visibleOnLayers[9];
+        List<AvatarPartObject> savedParts = GetTree().GetNodesInGroup("saved").OfType<AvatarPartObject>().ToList();
+        foreach (AvatarPartObject part in savedParts) {
+            if ( part.PartData.VisibleOnCostumeLayer[Global.Main.] ) {
+
+            }
+        }
     }
 
     public void HasParent()
