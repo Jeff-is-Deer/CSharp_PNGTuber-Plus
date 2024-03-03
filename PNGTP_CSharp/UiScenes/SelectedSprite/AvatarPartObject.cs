@@ -3,12 +3,37 @@
 using Godot;
 using static GlobalClass;
 using System;
+using System.Reflection.Emit;
+using System.Collections.Generic;
 
 public partial class AvatarPartObject : Node2D
 {
 	public const byte SPRITE = 1;
-	public const byte ANIMATION = 2;
+	public class ImageData
+	{
+		public Image image { get; set; }
+		public ImageTexture texture { get; set; } = null;
+		public Error error { get; set; }
+		public bool freeHim { get; set; } = false;
+		public ImageData(AvatarPartSprite partData) 
+		{
+			error = image.Load(partData.FilePath);
+			while (texture == null || freeHim) {
+				if ( error != Error.Ok ) {
+					if ( partData.Base64ImageData == string.Empty ) {
+						Global.ErrorHandler(error);
+						free = true;
+						image = null;
+						texture = null;
+					}
+				else {
+					byte[] imgData = Marshalls.Base64ToRaw( partData.Base64ImageData );
+					error = image.LoadPngFromBuffer( imgData );
 
+				}
+			}
+
+	}
 	// Scene nodes
 	public PackedScene OutlineScene { get; set; } = ResourceLoader.Load<PackedScene>("res://UiScenes/SelectedSprite/Outline.tscn");
 	public Sprite2D OriginSprite { get; set; } = null;
@@ -21,8 +46,7 @@ public partial class AvatarPartObject : Node2D
 	public AvatarPartSprite PartData { get; set; } = null;
 
 	// Passed Variables
-	public Image ImageData { get; set; } = null;
-	public ImageTexture ImageTextureFromData { get; set; } = null;
+	public ImageData  { get; set; } = null;
 
 	public Vector2 ImageSize { get; set; } = Vector2.Zero;
 
@@ -53,16 +77,8 @@ public partial class AvatarPartObject : Node2D
 		Dragger = GetNode<Node2D>("WobbleOrigin/Dragger");
 		WobbleOrigin = GetNode<Node2D>("WobbleOrigin");
 
-		try {
-            ImageData = Global.Main.UserAvatar.GetImageFromPath(PartData.FilePath);
-        }
-		catch {
-			ImageData = Global.Main.UserAvatar.GetImageFromBase64(PartData.Base64ImageData);
-		}
-		if (ImageData == null) {
-			QueueFree();
-			return;
-		}
+        ImageData = Global.Main.UserAvatar.GetImageFromPath(PartData.FilePath);
+		ImageData = ImageData == null ? Global.Main.UserAvatar.GetImageFromBase64(PartData.Base64ImageData) : ImageData;
 		ImageTextureFromData = ImageTexture.CreateFromImage(ImageData); 
 
 
