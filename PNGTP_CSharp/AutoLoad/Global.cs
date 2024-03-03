@@ -10,7 +10,7 @@ public partial class GlobalClass : Node
 	public delegate void StopSpeakingEventHandler();
 
 	public static GlobalClass Global { get; set; } = null;
-	public AvatarPartHeirarchyViewer AvatarPartHeirarchy { set; get; } = null;
+	public AvatarPartHeirarchyViewer AvatarPartList { set; get; } = null;
 	public AvatarPartObject SelectedAvatarPart { get; set; } = null;
 	public AvatarPartDetails AvatarPartDetailEdit { set; get; } = null;
 	public MicrophoneListener MicrophoneListener { get; set; }
@@ -61,7 +61,7 @@ public partial class GlobalClass : Node
 		}
 		if (Main != null && SelectedAvatarPart != null) {
 			if ( Input.IsActionJustPressed("zDown")) {
-				SelectedAvatarPart.PartData.ZLayer -= 1;
+				SelectedAvatarPart.PartData.ZIndex -= 1;
 				SelectedAvatarPart.SetZLayer();
 				PushUpdate("Moved sprite layer.");
 			}
@@ -105,7 +105,21 @@ public partial class GlobalClass : Node
 		await ToSignal(GetTree().CreateTimer(3) , SceneTreeTimer.SignalName.Timeout);
 		Failed.Visible = false;
 	}
-
+	public void UnlinkAvatarPart()
+	{
+		if (SelectedAvatarPart == null || SelectedAvatarPart.PartData.PID == 0) {
+			return;
+		}
+		Vector2 globalPos = SelectedAvatarPart.GlobalPosition;
+		globalPos = new Vector2((int)globalPos.X, (int)globalPos.Y);
+		SelectedAvatarPart.GetParent().RemoveChild(SelectedAvatarPart);
+		Main.Origin.AddChild(SelectedAvatarPart);
+		SelectedAvatarPart.Owner = Main.Origin;
+		SelectedAvatarPart.PartData.PID = 0;
+		SelectedAvatarPart.Position = globalPos - Main.Origin.Position;
+		Global.AvatarPartList.UpdateData();
+		PushUpdate("Unlinked sprite");
+	}
 	public void Select(Array<Area2D> areas)
 	{
 		if (Main.IsFileSystemOpen) {

@@ -13,7 +13,7 @@ public partial class AvatarPartHeirarchyViewer : Node2D
     public override void _Ready()
     {
         Container = GetNode<VBoxContainer>("ScrollContainer/VBoxContainer");
-        Global.SpriteList = this;
+        Global.AvatarPartList = this;
     }
 
     public async void UpdateData()

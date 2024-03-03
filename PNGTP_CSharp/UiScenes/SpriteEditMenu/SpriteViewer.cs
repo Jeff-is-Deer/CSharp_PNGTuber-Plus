@@ -1,13 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Godot.Collections;
 using static GlobalClass;
 
 
 public partial class AvatarPartDetails : Node2D
 {
+    public class LayerButton
+    {
+        public Sprite2D sprite { get; set; }
+        public Button button { get; set; }
+    }
+
+    #region signals
+    [Signal]
+    public delegate void DragSliderValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void XFrequencyValueChangedEventHandler(float value);
+    [Signal]
+    public delegate void XAmplitudeValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void YFrequencyValueChangedEventHandler(float value);
+    [Signal]
+    public delegate void YAmplitudeValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void RotationalDragValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void RotationalLimitMinimumValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void RotationalLimitMaximumValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void SquishValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void AnimationSpeedValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void AnimationFramesValueChangedEventHandler(int value);
+    [Signal]
+    public delegate void LayerButtonPressedEventHandler(int layer);
+    #endregion
+    #region nodes
     public Sprite3D ChildPartSpin { get; set; } = null;
     public Sprite3D ParentPartSpin { get; set; } = null;
     public Sprite2D SpriteRotationalDisplay { get; set; } = null;
@@ -81,8 +112,28 @@ public partial class AvatarPartDetails : Node2D
     public Sprite2D RotationalLine_2 { get; set; } = null;
     public Sprite2D RotationalLine_1 { get; set; } = null;
 
+    public LayerButton[] LayerButtons { get; set; } = null;
+    public Sprite2D ButtonOutline { get; set; } = null;
+    #endregion
+
+    #region methods
     public override void _Ready()
     {
+
+        DragSliderValueChanged += event_DragSliderValueChanged;
+        XFrequencyValueChanged += event_XFreqencyValueChanged;
+        XAmplitudeValueChanged += event_XAmplitudeValueChanged;
+        YFrequencyValueChanged += event_YFreqencyValueChanged;
+        YAmplitudeValueChanged += event_YAmplitudeValueChanged;
+        RotationalDragValueChanged += event_RotationalDragValueChanged;
+        RotationalLimitMaximumValueChanged += event_RotationalLimitMaximumValueChanged;
+        RotationalLimitMinimumValueChanged += event_RotationalLimitMinimumValueChanged;
+        SquishValueChanged += event_SquishValueChanged;
+        AnimationSpeedValueChanged += event_AnimationSpeedValueChanged;
+        AnimationFramesValueChanged += event_AnimationFramesValueChanged;
+        LayerButtonPressed += event_LayerButtonPressed;
+
+
         ChildPartSpin = GetNode<Sprite3D>("SubViewportContainer/SubViewport/Node3D/ChildPart3D"); // originally 'SubViewportContainer/SubViewport/Node3D/Sprite3D'
         ParentPartSpin = GetNode<Sprite3D>("SubViewportContainer2/SubViewport/Node3D/ParentPart3D"); // originally 'SubViewportContainer2/SubViewport/Node3D/Sprite3D'
         SpriteRotationalDisplay = GetNode<Sprite2D>("RotationalLimits/RotBack/SpriteDisplay");
@@ -138,13 +189,7 @@ public partial class AvatarPartDetails : Node2D
         RotationalLine_2 = GetNode<Sprite2D>("RotationalLimits/RotateBack/Line2");
         RotationalLine_3 = GetNode<Sprite2D>("RotationalLimits/RotateBack/Line3");
 
-
-
-
-
-        if ( Global.SelectedAvatarPart.PartData.PID == 0 ) {
-            UnlinkSprite.Visible = false;
-        }
+        ButtonOutline = GetNode<Sprite2D>("LayerButtons/Outline");
 
         Global.AvatarPartDetailEdit = this;
     }
@@ -157,12 +202,11 @@ public partial class AvatarPartDetails : Node2D
         if(!Visible) {
             return;
         }
-        AvatarPartObject part = Global.SelectedAvatarPart;
         ChildPartSpin.RotateY((float)delta * 4.0f);
         ParentPartSpin.RotateY((float)delta * 4.0f);
-        PositionLabel.Text = $"Position X: {part.PartData.Position.X}    Y: {part.PartData.Position.Y}";
-        OffsetLabel.Text =   $"Offset   X: {part.PartData.Offset.X}    Y: {part.PartData.Offset.Y}";
-        LayerLabel.Text =    $"Layer       {part.PartData.ZIndex}";
+        PositionLabel.Text = $"Position X: {Global.SelectedAvatarPart.PartData.Position.X}    Y: {Global.SelectedAvatarPart.PartData.Position.Y}";
+        OffsetLabel.Text =   $"Offset   X: {Global.SelectedAvatarPart.PartData.Offset.X}    Y: {Global.SelectedAvatarPart.PartData.Offset.Y}";
+        LayerLabel.Text =    $"Layer       {Global.SelectedAvatarPart.PartData.ZIndex}";
         int rotLimitMin = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
         int rotationSize = Global.SelectedAvatarPart.PartData.RotationalLimitMaximum - rotLimitMin;
         SpriteRotationalDisplay.RotationDegrees = Mathf.Sin(Global.AnimationTick * 0.05f) * ( rotationSize / 2 ) + ( rotLimitMin + ( rotationSize / 2 ) );
@@ -204,8 +248,8 @@ public partial class AvatarPartDetails : Node2D
         RotationalLimitMinimumLabel.Text = $"Rotational limit min: {Global.SelectedAvatarPart.PartData.RotationalLimitMinimum}";
         RotationalLimitMinimumSlider.Value = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
 
-        SquishLabel.Text = $"Squish: {Global.SelectedAvatarPart.PartData.StretchAmount}";
-        SquishSlider.Value = Global.SelectedAvatarPart.PartData.StretchAmount;
+        SquishLabel.Text = $"Squish: {Global.SelectedAvatarPart.PartData.SquishAmount}";
+        SquishSlider.Value = Global.SelectedAvatarPart.PartData.SquishAmount;
 
         FileTitleLabel.Text = Global.SelectedAvatarPart.PartData.FilePath;
 
@@ -221,9 +265,6 @@ public partial class AvatarPartDetails : Node2D
         ChangeRotationalLimit();
         SetLayerButtons();
         HasParent();
-
-
-
     }
     public void ChangeRotationalLimit()
     {
@@ -232,10 +273,9 @@ public partial class AvatarPartDetails : Node2D
         RotationalLine_1.RotationDegrees = Global.SelectedAvatarPart.PartData.RotationalLimitMinimum;
         RotationalLine_2.RotationDegrees = Global.SelectedAvatarPart.PartData.RotationalLimitMaximum;
     }
-
     public void SetLayerButtons()
     {
-        byte[] visibleOnLayers = Global.SelectedAvatarPart.PartData.VisibleOnCostumeLayer;
+        int[] visibleOnLayers = Global.SelectedAvatarPart.PartData.VisibleOnCostumeLayer;
         GetNode<Sprite2D>("LayerButtons/Layer1").Frame = visibleOnLayers[0];
         GetNode<Sprite2D>("LayerButtons/Layer2").Frame = visibleOnLayers[1];
         GetNode<Sprite2D>("LayerButtons/Layer3").Frame = visibleOnLayers[2];
@@ -246,14 +286,17 @@ public partial class AvatarPartDetails : Node2D
         GetNode<Sprite2D>("LayerButtons/Layer8").Frame = visibleOnLayers[7];
         GetNode<Sprite2D>("LayerButtons/Layer9").Frame = visibleOnLayers[8];
         GetNode<Sprite2D>("LayerButtons/Layer10").Frame = visibleOnLayers[9];
-        List<AvatarPartObject> savedParts = GetTree().GetNodesInGroup("saved").OfType<AvatarPartObject>().ToList();
-        foreach (AvatarPartObject part in savedParts) {
-            if ( part.PartData.VisibleOnCostumeLayer[Global.Main.] ) {
-
+        foreach (AvatarPartObject part in GetTree().GetNodesInGroup("saved").OfType<AvatarPartObject>().ToList()) {
+            if ( part.PartData.VisibleOnCostumeLayer[Global.Main.SelectedCostume] == 1 ) {
+                part.Visible = true;
+                part.ChangeCollision(true);
+            }
+            else {
+                part.Visible = false;
+                part.ChangeCollision(false);
             }
         }
     }
-
     public void HasParent()
     {
         if ( Global.SelectedAvatarPart.PartData.PID == 0 ) {
@@ -273,5 +316,123 @@ public partial class AvatarPartDetails : Node2D
                 return;
             }
         }
+    }
+    public void LayerSelected(int layer)
+    {
+        ButtonOutline.Position = LayerButtons[layer].sprite.Position;
+    }
+    #endregion
+
+    #region events
+    public void event_DragSliderValueChanged(int value)
+    {
+        if (Global.SelectedAvatarPart != null) {
+            DragSliderLabel.Text = $"Drag: {value}";
+            Global.SelectedAvatarPart.PartData.DragSpeed = value;
+        }
+    }
+    public void event_XFreqencyValueChanged(float value)
+    {
+        XWobbleFrequencyLabel.Text = $"X frequency: {value}";
+        Global.SelectedAvatarPart.PartData.XFrequency = value;
+    }
+    public void event_XAmplitudeValueChanged(int value)
+    {
+        XWobbleAmplitudeLabel.Text = $"X amplitude: {value}";
+        Global.SelectedAvatarPart.PartData.XAmplitude = value;
+    }
+    public void event_YFreqencyValueChanged(float value)
+    {
+        YWobbleFrequencyLabel.Text = $"Y frequency: {value}";
+        Global.SelectedAvatarPart.PartData.YFrequency = value;
+    }
+    public void event_YAmplitudeValueChanged(int value)
+    {
+        YWobbleAmplitudeLabel.Text = $"Y amplitude: {value}";
+        Global.SelectedAvatarPart.PartData.YAmplitude = value;
+    }
+    public void event_RotationalDragValueChanged(int value)
+    {
+        RotationalDragLabel.Text = $"Rotational drag: {value}";
+        Global.SelectedAvatarPart.PartData.RotationalDragStrength = value;
+    }
+    public void event_RotationalLimitMinimumValueChanged(int value)
+    {
+        RotationalLimitMinimumLabel.Text = $"Rotational limit min: {value}";
+        Global.SelectedAvatarPart.PartData.RotationalLimitMinimum = value;
+        ChangeRotationalLimit();
+    }
+    public void event_RotationalLimitMaximumValueChanged(int value)
+    {
+        RotationalLimitMaximumLabel.Text = $"Rotational limit max: {value}";
+        Global.SelectedAvatarPart.PartData.RotationalLimitMaximum = value;
+        ChangeRotationalLimit();
+    }
+    public void event_SquishValueChanged(int value)
+    {
+        SquishLabel.Text = $"Squish: {value}";
+        Global.SelectedAvatarPart.PartData.SquishAmount = value;
+    }
+    public void event_AnimationSpeedValueChanged(int value)
+    {
+        AnimationSpeedLabel.Text = $"Animation speed: {value}";
+        Global.SelectedAvatarPart.PartData.AnimationSpeed = value;
+    }
+    public void event_AnimationFramesValueChanged(int value)
+    {
+        AnimationFramesLabel.Text = $"Sprite frames: {value}";
+        Global.SelectedAvatarPart.PartData.NumberOfFrames = value;
+        ChildPartSpin.Hframes = Global.SelectedAvatarPart.PartData.NumberOfFrames;
+        Global.SelectedAvatarPart.ChangeFrames();
+    }
+    public void event_SpeakingButtonPressed()
+    {
+        SpeakingButtonSprite.Frame = ( SpeakingButtonSprite.Frame + 1 ) % 3;
+        Global.SelectedAvatarPart.PartData.ShowOnTalk = (byte) SpeakingButtonSprite.Frame;
+    }
+    public void event_BlinkingButtonPressed()
+    {
+        BlinkingButtonSprite.Frame = ( BlinkingButtonSprite.Frame + 1 ) % 3;
+        Global.SelectedAvatarPart.PartData.ShowOnBlink = (byte) BlinkingButtonSprite.Frame;
+    }
+    public void event_TrashButtonPressed()
+    {
+        Global.SelectedAvatarPart.QueueFree();
+        Global.SelectedAvatarPart = null;
+        Global.AvatarPartList.UpdateData();
+    }
+    public void event_UnlinkButtonPressed()
+    {
+        if ( Global.SelectedAvatarPart.PartData.PID == 0 ) {
+            return;
+        }
+        Global.UnlinkAvatarPart();
+        SetImage();
+    }
+    public void event_LayerButtonPressed(int layer)
+    {
+        Global.SelectedAvatarPart.PartData.VisibleOnCostumeLayer[layer] = Global.SelectedAvatarPart.PartData.VisibleOnCostumeLayer[layer] == 0 ? 1 : 0;
+        ButtonOutline.Position = LayerButtons[layer].sprite.Position;
+    }
+    public void event_IgnoreBounceToggled(bool toggle)
+    {
+        Global.SelectedAvatarPart.PartData.IgnoresBounce = toggle;
+    }
+    public void event_ClipLinkToggled(bool toggle)
+    {
+        Global.SelectedAvatarPart.SetClip(toggle);
+    }
+    #endregion
+
+    private LayerButton[] InitiateLayerButtons()
+    {
+        LayerButton[] buttons = new LayerButton[10];
+        for (int i = 0; i < 10 ; i++) {
+            buttons[i] = new LayerButton() {
+                sprite = GetNode<Sprite2D>($"LayerButtons/Sprite{i}") ,
+                button = GetNode<Button>($"LayerButtons/Sprite{i}/Button{i}")
+            };
+        }
+        return buttons;
     }
 }

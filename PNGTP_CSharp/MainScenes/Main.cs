@@ -18,6 +18,7 @@ public partial class Main : Node2D
     public FileDialog LoadDialog { get; set; } = null;
     public HSlider MicrophoneVolumeSlider { get; set; } = null;
     public HSlider MicrophoneSensitivitySlider { get; set; } = null;
+    public byte SelectedCostume { get; set; } = 0;
     public float BounceChange { get; set; } = 0.0f;
     public bool EditMode { get; set; } = true;
     public bool IsFileSystemOpen { get; set; } = false;

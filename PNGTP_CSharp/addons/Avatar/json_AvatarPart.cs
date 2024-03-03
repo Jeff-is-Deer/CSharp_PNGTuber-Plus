@@ -20,7 +20,7 @@ public partial class json_AvatarPart : Node
     public Int16 RotationalLimitMinimum { get; set; }
     public int DragSpeed { get; set; }
     public int RotationalDragStrength { get; set; }
-    public float StretchAmount { get; set; }
+    public float SquishAmount { get; set; }
     public int XAmplitude { get; set; }
     public int YAmplitude { get; set; }
     public float XFrequency { get; set; }

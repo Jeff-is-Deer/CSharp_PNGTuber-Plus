@@ -166,7 +166,7 @@ public partial class FileHandling : Node
                 RotationalLimitMinimum = avatar.Parts[partId].PartData.RotationalLimitMinimum,
                 DragSpeed = avatar.Parts[partId].PartData.DragSpeed,
                 RotationalDragStrength = avatar.Parts[partId].PartData.RotationalDragStrength,
-                StretchAmount = avatar.Parts[partId].PartData.StretchAmount,
+                SquishAmount = avatar.Parts[partId].PartData.SquishAmount,
                 XAmplitude = avatar.Parts[partId].PartData.XAmplitude,
                 YAmplitude = avatar.Parts[partId].PartData.YAmplitude,
                 XFrequency = avatar.Parts[partId].PartData.XFrequency,

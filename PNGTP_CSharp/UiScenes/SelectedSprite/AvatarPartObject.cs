@@ -191,7 +191,7 @@ public partial class AvatarPartObject : Node2D
 	}
 	public void SetZLayer()
 	{
-		Sprite.ZIndex = PartData.ZLayer;
+		ZIndex = PartData.ZIndex;
 	}
 	public void TalkBlink()
 	{
@@ -266,7 +266,7 @@ public partial class AvatarPartObject : Node2D
 	}
 	public void Stretch(float length,double delta)
 	{
-		float yVelocity = ( length * PartData.StretchAmount * 0.1f );
+		float yVelocity = ( length * PartData.SquishAmount * 0.1f );
 		Vector2 target = new Vector2(1.0f -  yVelocity , 1.0f + yVelocity );
 		Sprite.Scale = Sprite.Scale.Lerp(target , 0.5f);
 	}
@@ -276,8 +276,8 @@ public partial class AvatarPartObject : Node2D
 	}
 	public void ChangeFrames()
 	{
-		Sprite.Hframes = PartData.Frames;
-		Sprite.Frame = 0;
+		PartData.Hframes = PartData.NumberOfFrames;
+		PartData.NumberOfFrames = 0;
 	}
 	public void RemakePolygon()
 	{
@@ -307,9 +307,9 @@ public partial class AvatarPartObject : Node2D
 	public void SetClip(bool toggle)
 	{
 		if(toggle) {
-			Sprite.ClipChildren = ClipChildrenMode.AndDraw;
+			PartData.ClipChildren = ClipChildrenMode.AndDraw;
 			foreach (AvatarPartObject node in GetAllLinkedSprites()) {
-				node.ZIndex = PartData.ZLayer;
+				node.ZIndex = PartData.ZIndex;
 				node.SetZLayer();
 			}
 		}
