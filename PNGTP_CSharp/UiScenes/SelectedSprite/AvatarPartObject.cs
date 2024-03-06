@@ -5,6 +5,7 @@ using static GlobalClass;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 
 public partial class AvatarPartObject : Node2D
 {
@@ -27,12 +28,11 @@ public partial class AvatarPartObject : Node2D
 	public Area2D GrabArea { get; set; } = null;
 	public Node2D DragOrigin { get; set; } = null;
 	public Node2D Dragger { get; set; } = null;
-	public Node2D WobbleOrigin { get; set; } = null;
+	public Node2D PivotPoint { get; set; } = null;
 
 	// Sprite data
 	public AvatarPartSprite PartData { get; set; } = null;
 	public ImageData LoadedImageData { get; set; } = null;
-	public Vector2 ImageSize { get; set; } = Vector2.Zero;
 
 	// Visuals
 	public Vector2 MouseOffset { get; set; } = Vector2.Zero;
@@ -54,12 +54,12 @@ public partial class AvatarPartObject : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override async void _Ready()
 	{
-		PartData = GetNode<AvatarPartSprite>("WobbleOrigin/DragOrigin/AvatarPart");
-		OriginSprite = GetNode<Sprite2D>("WobbleOrigin/DragOrigin/AvatarPart/Origin");
-		GrabArea = GetNode<Area2D>("WobbleOrigin/DragOrigin/Grab");
-		DragOrigin = GetNode<Node2D>("WobbleOrigin/DragOrigin");
-		Dragger = GetNode<Node2D>("WobbleOrigin/Dragger");
-		WobbleOrigin = GetNode<Node2D>("WobbleOrigin");
+		PartData = GetNode<AvatarPartSprite>("PivotPoint/DragOrigin/AvatarPart");
+		OriginSprite = GetNode<Sprite2D>("PivotPoint/DragOrigin/AvatarPart/Origin");
+		GrabArea = GetNode<Area2D>("PivotPoint/DragOrigin/Grab");
+		DragOrigin = GetNode<Node2D>("PivotPoint/DragOrigin");
+		Dragger = GetNode<Node2D>("PivotPoint/Dragger");
+		PivotPoint = GetNode<Node2D>("PivotPoint");
 
 		SetLoadedImageData(PartData);
 		SetImageGrabArea();
@@ -147,10 +147,10 @@ public partial class AvatarPartObject : Node2D
         if ( PartData.PID != 0 ) {
 			List<AvatarPartObject> nodes = GetTree().GetNodesInGroup(PartData.PID.ToString()).OfType<AvatarPartObject>().ToList(); ;
             GetParent().RemoveChild(this);
-            nodes[0].GetNode<AvatarPartObject>("WobbleOrigin/DragOrigin/AvatarPart").AddChild(this);
+            nodes[0].GetNode<AvatarPartObject>("PivotPoint/DragOrigin/AvatarPart").AddChild(this);
             PartData.ParentPart = nodes[0].PartData;
 			nodes[0].AddChild(this);
-            Owner = nodes[0].GetNode("WobbleOrigin/DragOrigin/AvatarPart");
+            Owner = nodes[0].GetNode("PivotPoint/DragOrigin/AvatarPart");
         }
     }
     public void ReplaceSprite(string newPath)
@@ -258,17 +258,17 @@ public partial class AvatarPartObject : Node2D
 	public void Drag(double delta)
 	{
 		if ( PartData.DragSpeed == 0 ) {
-			Dragger.GlobalPosition = WobbleOrigin.GlobalPosition;
+			Dragger.GlobalPosition = PivotPoint.GlobalPosition;
 		}
 		else {
-			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(WobbleOrigin.GlobalPosition , ( float ) ( ( delta * 20 ) / PartData.DragSpeed ));
+			Dragger.GlobalPosition = Dragger.GlobalPosition.Lerp(PivotPoint.GlobalPosition , ( float ) ( ( delta * 20 ) / PartData.DragSpeed ));
 			DragOrigin.GlobalPosition = Dragger.GlobalPosition;
 		}
 	}
 	public void Wobble()
 	{
 		Vector2 wavePosition = new Vector2(MathF.Sin(Tick * PartData.XFrequency) * PartData.XAmplification , MathF.Sin(Tick * PartData.YFrequency) * PartData.YAmplification);
-		WobbleOrigin.Position = wavePosition;
+		PivotPoint.Position = wavePosition;
 	}
 	public void RotationalDrag(float length , double delta)
 	{
@@ -300,11 +300,11 @@ public partial class AvatarPartObject : Node2D
 		}
 		CollisionShape2D collider = new CollisionShape2D();
 		RectangleShape2D shape = new RectangleShape2D();
-		shape.Size = new Vector2(ImageSize.Y , ImageSize.Y);
+		shape.Size = new Vector2(LoadedImageData.size.Y , LoadedImageData.size.Y);
 		collider.Shape = shape;
-		collider.Position = new Vector2(ImageSize.X , ImageSize.Y) + new Vector2(0.5f , 0.5f);
+		collider.Position = new Vector2(LoadedImageData.size.Y , LoadedImageData.size.Y) + new Vector2(0.5f , 0.5f);
 		GrabArea.AddChild(collider);
-		float vecPoint = ImageSize.Y * 0.5f;
+		float vecPoint = LoadedImageData.size.Y * 0.5f;
 		Line2D outline = OutlineScene.Instantiate<Line2D>();
 		outline.AddPoint(new Vector2(-vecPoint , -vecPoint));
 		outline.AddPoint(new Vector2(vecPoint , -vecPoint));
