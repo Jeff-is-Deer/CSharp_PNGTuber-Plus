@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Threading.Tasks;
 
 public partial class GlobalClass : Node
 {
@@ -67,7 +68,10 @@ public partial class GlobalClass : Node
 			}
 		}
 	}
-
+	public async Task Timeout(double seconds,Node node)
+	{
+		await ToSignal(node.GetTree().CreateTimer(seconds) , SceneTreeTimer.SignalName.Timeout);
+	}
 	public async void ErrorHandler(Error error)
 	{
 		if(Failed == null) {

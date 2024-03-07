@@ -61,6 +61,7 @@ public partial class AvatarPartObject : Node2D
 		Dragger = GetNode<Node2D>("PivotPoint/Dragger");
 		PivotPoint = GetNode<Node2D>("PivotPoint");
 
+		
 		SetLoadedImageData(PartData);
 		SetImageGrabArea();
 		SetImagePositions();
@@ -68,7 +69,7 @@ public partial class AvatarPartObject : Node2D
 		SetZLayer();
 		RemakePolygon();
 		AddToGroup(PartData.ID.ToString());
-		await ToSignal(GetTree().CreateTimer(0.1) , SceneTreeTimer.SignalName.Timeout);
+		await Global.Timeout(0.1 , this);
 		SetClip(PartData.IsClipped);
 		if ( Global.Filtering ) {
 			PartData.TextureFilter = TextureFilterEnum.Linear;
@@ -148,7 +149,6 @@ public partial class AvatarPartObject : Node2D
 			List<AvatarPartObject> nodes = GetTree().GetNodesInGroup(PartData.PID.ToString()).OfType<AvatarPartObject>().ToList(); ;
             GetParent().RemoveChild(this);
             nodes[0].GetNode<AvatarPartObject>("PivotPoint/DragOrigin/AvatarPart").AddChild(this);
-            PartData.ParentPart = nodes[0].PartData;
 			nodes[0].AddChild(this);
             Owner = nodes[0].GetNode("PivotPoint/DragOrigin/AvatarPart");
         }
