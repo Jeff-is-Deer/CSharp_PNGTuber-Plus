@@ -9,3 +9,5 @@ Translation of [Kaiakairos](https://github.com/kaiakairos)' [PNGTuber+](https://
 - Extend functionality through the use of WebSocket
     - Receive simple "commands" that change application parameters or states.  For example, receiving a command to change costume and change gravity value
     - This will allow direct interaction through stream applications such as [Streamer.bot](https://streamer.bot/) or [SAMMI](https://sammi.solutions/)
+
+20240311: Project archived due to starting another project similar in nature.
